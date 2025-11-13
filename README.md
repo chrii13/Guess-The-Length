@@ -8,6 +8,8 @@ Un gioco web interattivo dove devi allungare un metro giallo realistico per indo
 - Per ogni lunghezza hai **2 tentativi**
 - Il punteggio è la **somma degli errori migliori** (uno per ogni lunghezza)
 - **Obiettivo**: ottenere il punteggio più basso possibile!
+- **Sfida**: devi indovinare ad occhio! Non puoi vedere la lunghezza attuale del metro mentre giochi
+- **Calibrazione automatica**: il sistema si calibra automaticamente per ogni monitor, garantendo misurazioni accurate indipendentemente dalla risoluzione
 
 ## 🚀 Setup Locale
 
@@ -216,9 +218,11 @@ meter-game/
 
 ## 📝 Note
 
-- Il metro è calibrato a 37.8 pixel per centimetro (96 DPI standard)
+- **Calibrazione automatica**: Il sistema calibra automaticamente il rapporto pixel/cm usando le dimensioni CSS reali del browser. Questo garantisce misurazioni accurate su qualsiasi monitor, indipendentemente dalla risoluzione o DPI.
+- La calibrazione viene salvata nel localStorage del browser per migliori performance
 - I punteggi sono salvati automaticamente alla fine di ogni partita
 - Solo il miglior punteggio di ogni utente viene mantenuto nel database
+- **Nessun aiuto visivo**: Durante il gioco non puoi vedere la lunghezza attuale del metro - devi indovinare ad occhio!
 
 ## 📄 Licenza
 

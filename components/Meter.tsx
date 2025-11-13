@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { pixelsToCm, formatLength } from '@/lib/game'
 
 interface MeterProps {
   length: number // in pixel
@@ -68,15 +67,15 @@ export function Meter({ length, onLengthChange, maxLength }: MeterProps) {
     setIsDragging(false)
   }
 
-  const currentLengthCm = pixelsToCm(length)
+  // Calcola quante lettere mostrare in base alla lunghezza
+  const text = "Meter Game"
+  const minWidthPerChar = 10 // Pixel minimi per carattere (considerando le maniglie)
+  const availableWidth = length - 80 // 80px per le maniglie (40px x 2)
+  const visibleChars = Math.floor(availableWidth / minWidthPerChar)
+  const displayText = text.substring(0, Math.max(0, Math.min(text.length, visibleChars)))
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <div className="text-center">
-        <p className="text-sm text-gray-600 mb-1">Lunghezza attuale</p>
-        <p className="text-3xl font-bold text-indigo-700">{formatLength(currentLengthCm)} cm</p>
-      </div>
-
       <div
         ref={meterRef}
         className="relative cursor-grab active:cursor-grabbing select-none"
@@ -85,55 +84,84 @@ export function Meter({ length, onLengthChange, maxLength }: MeterProps) {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Metro giallo realistico */}
+        {/* Metro giallo realistico senza linee di misurazione */}
         <div
-          className="relative bg-gradient-to-b from-yellow-400 via-yellow-500 to-yellow-600 rounded-lg shadow-lg"
+          className="relative rounded-lg shadow-2xl"
           style={{
             width: `${length}px`,
-            height: '60px',
-            transition: isDragging ? 'none' : 'width 0.1s ease-out',
+            height: '70px',
+            transition: isDragging ? 'none' : 'width 0.15s ease-out',
+            background: 'linear-gradient(to bottom, #FFD700 0%, #FFA500 50%, #FF8C00 100%)',
+            boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.3), inset 0 -2px 4px rgba(0,0,0,0.2), 0 4px 8px rgba(0,0,0,0.3)',
           }}
         >
-          {/* Bordo superiore e inferiore */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-yellow-700 opacity-50"></div>
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-yellow-700 opacity-50"></div>
+          {/* Texture metallica con pattern sottile */}
+          <div 
+            className="absolute inset-0 opacity-20 rounded-lg"
+            style={{
+              backgroundImage: 'repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(0,0,0,0.05) 3px, rgba(0,0,0,0.05) 6px)',
+            }}
+          />
 
-          {/* Linee di misurazione */}
-          {Array.from({ length: Math.floor(length / 20) }).map((_, i) => {
-            const pos = i * 20
-            const isMajor = i % 5 === 0
-            return (
-              <div
-                key={i}
-                className="absolute top-0 bottom-0 w-px bg-black opacity-30"
-                style={{ left: `${pos}px` }}
-              >
-                {isMajor && (
-                  <div className="absolute top-0 left-1/2 transform -translate-x-1/2 text-xs font-bold text-black opacity-60">
-                    {Math.floor(pixelsToCm(pos))}
-                  </div>
-                )}
-              </div>
-            )
-          })}
+          {/* Bordo superiore metallico */}
+          <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-b from-yellow-200 to-yellow-600 opacity-80 rounded-t-lg"></div>
+          
+          {/* Bordo inferiore metallico */}
+          <div className="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-b from-yellow-600 to-yellow-800 opacity-80 rounded-b-lg"></div>
 
-          {/* Maniglia sinistra */}
-          <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-yellow-600 to-yellow-500 rounded-l-lg flex items-center justify-center">
-            <div className="w-4 h-4 bg-yellow-700 rounded-full"></div>
+          {/* Scritta "Meter Game" che si adatta alla lunghezza */}
+          <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+            <span 
+              className="font-bold text-yellow-900 select-none"
+              style={{
+                fontSize: '28px',
+                textShadow: '2px 2px 3px rgba(0,0,0,0.4), -1px -1px 1px rgba(255,255,255,0.2)',
+                letterSpacing: '3px',
+                whiteSpace: 'nowrap',
+                textAlign: 'center',
+              }}
+            >
+              {displayText}
+              {displayText.length < text.length && (
+                <span className="text-yellow-800 opacity-60">...</span>
+              )}
+            </span>
           </div>
 
-          {/* Maniglia destra (draggable) */}
+          {/* Maniglia sinistra fissa con dettagli realistici */}
+          <div className="absolute left-0 top-0 bottom-0 w-10 bg-gradient-to-r from-yellow-700 via-yellow-600 to-yellow-500 rounded-l-lg flex items-center justify-center shadow-inner z-10">
+            {/* Foro centrale */}
+            <div className="w-6 h-6 bg-gradient-to-br from-yellow-800 to-yellow-900 rounded-full shadow-inner border-2 border-yellow-950"></div>
+            {/* Riflesso */}
+            <div className="absolute top-2 left-2 w-3 h-3 bg-white opacity-30 rounded-full"></div>
+          </div>
+
+          {/* Maniglia destra draggable con dettagli realistici */}
           <div
-            className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-yellow-600 to-yellow-500 rounded-r-lg flex items-center justify-center shadow-lg"
+            className="absolute right-0 top-0 bottom-0 w-10 bg-gradient-to-l from-yellow-700 via-yellow-600 to-yellow-500 rounded-r-lg flex items-center justify-center shadow-lg border-l-2 border-yellow-800 z-10"
             style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
           >
-            <div className="w-4 h-4 bg-yellow-700 rounded-full"></div>
+            {/* Foro centrale */}
+            <div className="w-6 h-6 bg-gradient-to-br from-yellow-800 to-yellow-900 rounded-full shadow-inner border-2 border-yellow-950"></div>
+            {/* Riflesso */}
+            <div className="absolute top-2 right-2 w-3 h-3 bg-white opacity-30 rounded-full"></div>
+            {/* Indicatore di trascinamento */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-8 h-1 bg-yellow-300 opacity-50 rounded"></div>
+            </div>
           </div>
+
+          {/* Ombre laterali per profondità */}
+          <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-r from-black opacity-20 rounded-l-lg"></div>
+          <div className="absolute right-0 top-0 bottom-0 w-1 bg-gradient-to-l from-black opacity-20 rounded-r-lg"></div>
         </div>
       </div>
 
-      <p className="text-xs text-gray-500">Trascina la maniglia destra per allungare il metro</p>
+      <p className="text-xs text-gray-500 text-center max-w-md">
+        Trascina la maniglia destra per allungare il metro. 
+        <br />
+        <span className="font-semibold">Consiglio: Usare un righello non è la scelta migliore...</span>
+      </p>
     </div>
   )
 }
-

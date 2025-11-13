@@ -19,10 +19,23 @@ export default function RegisterPage() {
     setError('')
     setLoading(true)
 
-    // Registra l'utente
+    // Verifica che l'username sia stato inserito
+    if (!username || username.trim().length < 5) {
+      setError('Username obbligatorio (minimo 5 caratteri)')
+      setLoading(false)
+      return
+    }
+
+    // Registra l'utente con metadata che include l'username
+    // Il trigger database creerà automaticamente il profilo
     const { data: authData, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          username: username.trim(),
+        },
+      },
     })
 
     if (signUpError) {
@@ -32,17 +45,23 @@ export default function RegisterPage() {
     }
 
     if (authData.user) {
-      // Crea il profilo utente
+      // Il profilo viene creato automaticamente dal trigger database
+      // Aspettiamo un attimo per assicurarci che il trigger abbia finito
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      // Se il profilo non esiste ancora, proviamo a crearlo manualmente
       const { error: profileError } = await supabase
         .from('profiles')
-        .insert({
+        .upsert({
           id: authData.user.id,
-          username: username || email.split('@')[0],
+          username: username.trim(),
+        }, {
+          onConflict: 'id'
         })
 
       if (profileError) {
         console.error('Error creating profile:', profileError)
-        // Non blocchiamo la registrazione se il profilo fallisce
+        // Non blocchiamo la registrazione, il trigger dovrebbe averlo creato
       }
 
       router.push('/')
@@ -59,16 +78,19 @@ export default function RegisterPage() {
           <form onSubmit={handleRegister} className="space-y-4">
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
-                Username
+                Username <span className="text-red-500">*</span>
               </label>
               <input
                 id="username"
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                required
+                minLength={5}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 placeholder="Il tuo username"
               />
+              <p className="mt-1 text-xs text-gray-500">Minimo 5 caratteri (obbligatorio)</p>
             </div>
 
             <div>
@@ -96,11 +118,11 @@ export default function RegisterPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                minLength={6}
+                minLength={8}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 placeholder="••••••••"
               />
-              <p className="mt-1 text-xs text-gray-500">Minimo 6 caratteri</p>
+              <p className="mt-1 text-xs text-gray-500">Minimo 8 caratteri</p>
             </div>
 
             {error && (

@@ -1,3 +1,6 @@
+// Importa le funzioni di calibrazione
+import { pixelsToCm as calibratedPixelsToCm, cmToPixels as calibratedCmToPixels } from './calibration'
+
 // Genera una lunghezza casuale tra 1 e 15 cm con 2 decimali
 export function generateRandomLength(): number {
   const min = 100 // 1.00 cm in centesimi
@@ -11,14 +14,14 @@ export function calculateError(actual: number, target: number): number {
   return Math.abs(actual - target)
 }
 
-// Converte pixel in cm (assumendo 1 cm = 37.8 pixel a 96 DPI)
+// Converte pixel in cm usando la calibrazione universale
 export function pixelsToCm(pixels: number): number {
-  return pixels / 37.8
+  return calibratedPixelsToCm(pixels)
 }
 
-// Converte cm in pixel
+// Converte cm in pixel usando la calibrazione universale
 export function cmToPixels(cm: number): number {
-  return cm * 37.8
+  return calibratedCmToPixels(cm)
 }
 
 // Formatta un numero con 2 decimali

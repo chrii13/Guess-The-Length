@@ -22,6 +22,14 @@ CREATE TABLE IF NOT EXISTS scores (
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE scores ENABLE ROW LEVEL SECURITY;
 
+-- Rimuovi le policy esistenti se esistono (per evitare errori)
+DROP POLICY IF EXISTS "Profiles are viewable by everyone" ON profiles;
+DROP POLICY IF EXISTS "Users can insert their own profile" ON profiles;
+DROP POLICY IF EXISTS "Users can update their own profile" ON profiles;
+DROP POLICY IF EXISTS "Scores are viewable by everyone" ON scores;
+DROP POLICY IF EXISTS "Users can insert their own score" ON scores;
+DROP POLICY IF EXISTS "Users can update their own score" ON scores;
+
 -- Policy per profiles: tutti possono leggere, solo il proprietario può modificare
 CREATE POLICY "Profiles are viewable by everyone" ON profiles
   FOR SELECT USING (true);
@@ -51,7 +59,47 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
+-- Rimuovi il trigger se esiste prima di crearlo
+DROP TRIGGER IF EXISTS update_scores_updated_at ON scores;
+
 -- Trigger per aggiornare updated_at su scores
 CREATE TRIGGER update_scores_updated_at BEFORE UPDATE ON scores
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Funzione per creare automaticamente il profilo quando viene creato un utente
+CREATE OR REPLACE FUNCTION handle_new_user()
+RETURNS TRIGGER AS $$
+DECLARE
+  user_username TEXT;
+BEGIN
+  -- Estrai l'username dai metadata o dall'email
+  user_username := COALESCE(
+    NEW.raw_user_meta_data->>'username',
+    split_part(NEW.email, '@', 1)
+  );
+  
+  -- Inserisci o aggiorna il profilo
+  INSERT INTO public.profiles (id, username)
+  VALUES (NEW.id, user_username)
+  ON CONFLICT (id) DO UPDATE
+  SET username = COALESCE(
+    EXCLUDED.username,
+    public.profiles.username,
+    user_username
+  );
+  
+  RETURN NEW;
+EXCEPTION
+  WHEN OTHERS THEN
+    -- Se c'è un errore, logga ma non bloccare la creazione dell'utente
+    RAISE WARNING 'Error creating profile for user %: %', NEW.id, SQLERRM;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Trigger che chiama handle_new_user quando viene creato un nuovo utente
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION handle_new_user();
 
