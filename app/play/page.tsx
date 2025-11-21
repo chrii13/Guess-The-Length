@@ -5,11 +5,10 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Navbar } from '@/components/Navbar'
 import { Meter } from '@/components/Meter'
-import { CalibrationMeter } from '@/components/CalibrationMeter'
 import { CmReferenceBox } from '@/components/CmReferenceBox'
 import { useAuth } from '@/components/AuthProvider'
 import { generateRandomLength, calculateError, pixelsToCm, formatLength, cmToPixels } from '@/lib/game'
-import { calibrate, setCalibration } from '@/lib/calibration'
+import { calibrate } from '@/lib/calibration'
 import { saveGameSession, getUserBestScore, type RoundData } from '@/lib/scores'
 import { NewBestScore } from '@/components/NewBestScore'
 import { SvgIcon } from '@/components/SvgIcon'
@@ -29,7 +28,6 @@ export default function PlayPage() {
   const [currentRound, setCurrentRound] = useState(0)
   const [currentAttempt, setCurrentAttempt] = useState(0)
   const [meterLength, setMeterLength] = useState(cmToPixels(5)) // Inizia a 5 cm
-  const [isCalibrated, setIsCalibrated] = useState(false)
   const [gameStarted, setGameStarted] = useState(false)
   const [gameFinished, setGameFinished] = useState(false)
   const [totalScore, setTotalScore] = useState(0)
@@ -43,17 +41,10 @@ export default function PlayPage() {
 
   const maxLength = cmToPixels(15) // Massimo 15 cm
 
-  // Controlla se c'è già una calibrazione salvata
+  // Inizializza la calibrazione con valore di default
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('meter_game_pixels_per_cm')
-      if (saved && parseFloat(saved) > 0) {
-        setIsCalibrated(true)
-        calibrate() // Carica la calibrazione salvata
-      } else {
-        // Non c'è calibrazione salvata, mostra la schermata di calibrazione
-        setIsCalibrated(false)
-      }
+      calibrate() // Inizializza la calibrazione (usa valore salvato o default)
     }
   }, [])
 
@@ -187,23 +178,6 @@ export default function PlayPage() {
 
   if (!user) {
     return null
-  }
-
-  // Schermata di calibrazione
-  if (!isCalibrated) {
-    return (
-      <>
-        <Navbar />
-        <main className="max-w-4xl mx-auto px-4 py-8 md:py-16">
-          <CalibrationMeter 
-            onCalibrated={(ratio) => {
-              setCalibration(ratio)
-              setIsCalibrated(true)
-            }} 
-          />
-        </main>
-      </>
-    )
   }
 
   if (!gameStarted) {
