@@ -108,15 +108,15 @@ export default function RegisterPage() {
         const { exists } = await checkEmailResponse.json()
         
         if (exists) {
-          // L'email esiste già
-          setError('L\'email inserita è già in uso. Usa un\'altra email o accedi se hai già un account.')
+          // L'email esiste già - messaggio chiaro con suggerimento di accedere
+          setError('Questa email è già registrata. Accedi se hai già un account, oppure usa un\'altra email.')
           setLoading(false)
           setAttempts(prev => prev + 1)
           return
         }
       } else {
         // Se l'endpoint fallisce, logga ma continua (il server potrebbe non essere configurato)
-        console.warn('Email check endpoint failed, continuing with registration')
+        console.warn('Email check endpoint failed with status:', checkEmailResponse.status, 'continuing with registration')
       }
     } catch (error) {
       // Se l'endpoint non è disponibile, logga ma continua
@@ -182,16 +182,19 @@ export default function RegisterPage() {
         errorMessage.includes('a user with this email address has already been registered') ||
         errorMessage.includes('signup is disabled') ||
         errorMessage.includes('email already confirmed') ||
+        errorMessage.includes('user with this email') ||
+        errorMessage.includes('duplicate key value') ||
         errorCode === 422 ||
         errorCode === 400 ||
         errorCode === 'email_already_registered' ||
         errorCode === '23505' || // PostgreSQL unique violation
         errorCode === 'PGRST301' || // PostgREST conflict
         errorName === 'authapierror' && (errorCode === 422 || errorCode === 400 || errorMessage.includes('already')) ||
-        (errorCode === 422 && errorMessage.includes('email')) // Status 422 con messaggio che contiene email
+        (errorCode === 422 && errorMessage.includes('email')) || // Status 422 con messaggio che contiene email
+        (errorCode === 400 && (errorMessage.includes('email') || errorMessage.includes('user'))) // Status 400 con email/user
       ) {
-        // Errore specifico per email già registrata
-        setError('Email già in uso. Usa un\'altra email o accedi se hai già un account.')
+        // Errore specifico per email già registrata - messaggio chiaro con suggerimento di accedere
+        setError('Questa email è già registrata. Accedi se hai già un account, oppure usa un\'altra email.')
         setLoading(false)
         return
       } 
@@ -220,10 +223,16 @@ export default function RegisterPage() {
           errorCode === '23505' || // PostgreSQL unique violation
           (errorMessage.includes('already') || errorMessage.includes('exists') || errorMessage.includes('duplicate'))
         ) {
-          setError('Credenziali già in uso. Verifica email o username e riprova.')
+          setError('Questa email o username è già in uso. Accedi se hai già un account, oppure usa credenziali diverse.')
         } else {
           // Mostra messaggio con dettagli utili per debug
-          setError('Errore durante la registrazione: ' + (signUpError.message || 'Riprova più tardi.'))
+          // Se il messaggio contiene "already" o "exists", suggerisci di accedere
+          const errorMsg = signUpError.message || ''
+          if (errorMsg.toLowerCase().includes('already') || errorMsg.toLowerCase().includes('exists') || errorMsg.toLowerCase().includes('registered')) {
+            setError('Questa email è già registrata. Accedi se hai già un account, oppure usa un\'altra email.')
+          } else {
+            setError('Errore durante la registrazione: ' + (errorMsg || 'Riprova più tardi.'))
+          }
         }
       }
       setLoading(false)
@@ -235,7 +244,7 @@ export default function RegisterPage() {
     // potrebbe significare che l'email esiste già (non verificata)
     if (!authData?.user) {
       // Non c'è un user - l'email esiste già e Supabase non ha creato un nuovo utente
-      setError('L\'email inserita è già in uso. Verifica la tua email o accedi se hai già un account.')
+      setError('Questa email è già registrata. Accedi se hai già un account, oppure usa un\'altra email.')
       setLoading(false)
       setAttempts(prev => prev + 1)
       return
@@ -260,7 +269,7 @@ export default function RegisterPage() {
     // Un nuovo utente dovrebbe essere creato praticamente istantaneamente (meno di 1 secondo fa)
     if (secondsSinceCreation > 1) {
       // L'utente esisteva già - blocca la registrazione
-      setError('L\'email inserita è già in uso. Accedi se hai già un account.')
+      setError('Questa email è già registrata. Accedi se hai già un account, oppure usa un\'altra email.')
       setLoading(false)
       setAttempts(prev => prev + 1)
       return
@@ -286,7 +295,7 @@ export default function RegisterPage() {
       
       // Se l'ID è diverso, significa che sono utenti diversi - l'email esiste già
       if (loginUserId !== newUserId) {
-        setError('L\'email inserita è già in uso. Accedi se hai già un account.')
+        setError('Questa email è già registrata. Accedi se hai già un account, oppure usa un\'altra email.')
         setLoading(false)
         setAttempts(prev => prev + 1)
         await supabase.auth.signOut()
@@ -299,7 +308,7 @@ export default function RegisterPage() {
         const loginSecondsSinceCreation = (currentTime.getTime() - loginUserCreatedAt.getTime()) / 1000
         // Se possiamo fare login e l'utente è stato creato più di 2 secondi fa, esisteva già
         if (loginSecondsSinceCreation > 2) {
-          setError('L\'email inserita è già in uso. Accedi se hai già un account.')
+          setError('Questa email è già registrata. Accedi se hai già un account, oppure usa un\'altra email.')
           setLoading(false)
           setAttempts(prev => prev + 1)
           await supabase.auth.signOut()
@@ -316,7 +325,7 @@ export default function RegisterPage() {
     // Se un utente è verificato immediatamente dopo la registrazione, probabilmente esisteva già
     if (authData.user.email_confirmed_at && secondsSinceCreation > 0.5) {
       // L'utente è verificato e non è appena stato creato - probabilmente esisteva già
-      setError('L\'email inserita è già in uso. Accedi se hai già un account.')
+      setError('Questa email è già registrata. Accedi se hai già un account, oppure usa un\'altra email.')
       setLoading(false)
       setAttempts(prev => prev + 1)
       return
@@ -326,7 +335,7 @@ export default function RegisterPage() {
     // Se Supabase restituisce una session, significa che l'utente è già autenticato
     if (authData?.session) {
       // C'è una session nella risposta - l'utente esisteva già e la password è corretta
-      setError('L\'email inserita è già in uso. Accedi se hai già un account.')
+      setError('Questa email è già registrata. Accedi se hai già un account, oppure usa un\'altra email.')
       setLoading(false)
       setAttempts(prev => prev + 1)
       // Fai logout per non autenticare l'utente esistente
@@ -448,8 +457,15 @@ export default function RegisterPage() {
             </div>
 
             {error && (
-              <div className="bg-red-50 border-2 border-red-300 text-red-700 px-4 py-3 rounded-xl-large text-sm">
-                {error}
+              <div className="bg-red-50 dark:bg-red-900/20 border-2 border-red-300 dark:border-red-700 text-red-700 dark:text-red-400 px-4 py-3 rounded-xl-large text-sm">
+                <div className="flex flex-col gap-2">
+                  <div>{error}</div>
+                  {(error.includes('già registrata') || error.includes('già in uso')) && (
+                    <Link href="/login" className="text-red-800 dark:text-red-300 hover:underline font-semibold text-sm">
+                      → Vai alla pagina di accesso
+                    </Link>
+                  )}
+                </div>
               </div>
             )}
 
