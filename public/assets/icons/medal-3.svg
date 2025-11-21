@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" fill="none">
+  <!-- Medaglia bronzo 3° posto -->
+  <circle cx="30" cy="30" r="25" fill="#CD7F32" stroke="#B87333" stroke-width="3" filter="url(#shadow)"/>
+  <circle cx="30" cy="30" r="20" fill="#E6A857" opacity="0.8"/>
+  <text x="30" y="36" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#1C1C1C" text-anchor="middle">3</text>
+  <!-- Nastro superiore -->
+  <rect x="20" y="5" width="20" height="8" rx="2" fill="#B87333"/>
+  <defs>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1.5"/>
+      <feOffset dx="2" dy="2" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+</svg>
+

@@ -7,8 +7,8 @@ import { Footer } from '@/components/Footer'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Meter Game - Allunga il Metro',
-  description: 'Gioco interattivo: allunga il metro per indovinare la lunghezza esatta!',
+  title: 'Guess the Length - Indovina la Lunghezza',
+  description: 'Gioco interattivo: allunga il metro per indovinare la lunghezza esatta! Diventa il maestro delle misurazioni.',
 }
 
 export default function RootLayout({

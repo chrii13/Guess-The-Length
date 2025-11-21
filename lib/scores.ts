@@ -1,4 +1,5 @@
 import { supabase } from './supabase'
+import { sanitizeString } from './sanitize'
 
 export interface Score {
   id: string
@@ -123,7 +124,7 @@ export async function getLeaderboard(limit: number = 10): Promise<Score[]> {
       id: item.id,
       user_id: item.user_id,
       best_score: Number(item.best_score),
-      username: username || 'Utente',
+      username: sanitizeString(username || 'Utente'),
       created_at: item.created_at,
       updated_at: item.updated_at,
     })

@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" fill="none" opacity="0.1">
+  <!-- Background cantiere cartoon - stile pastello leggero -->
+  
+  <!-- Cielo -->
+  <rect x="0" y="0" width="1200" height="450" fill="#E8F4F8"/>
+  
+  <!-- Terra/sabbia pastello -->
+  <rect x="0" y="450" width="1200" height="450" fill="#F5E6D3"/>
+  
+  <!-- Nuvole leggere -->
+  <ellipse cx="150" cy="100" rx="80" ry="40" fill="#FFFFFF" opacity="0.6"/>
+  <ellipse cx="400" cy="150" rx="100" ry="50" fill="#FFFFFF" opacity="0.5"/>
+  <ellipse cx="800" cy="120" rx="90" ry="45" fill="#FFFFFF" opacity="0.6"/>
+  
+  <!-- Asse di legno orizzontale -->
+  <rect x="200" y="500" width="300" height="25" rx="5" fill="#D4A574" stroke="#B88652" stroke-width="2" opacity="0.4"/>
+  <!-- Texture legno -->
+  <line x1="210" y1="508" x2="485" y2="508" stroke="#B88652" stroke-width="1" opacity="0.3"/>
+  <line x1="210" y1="517" x2="485" y2="517" stroke="#B88652" stroke-width="1" opacity="0.3"/>
+  <!-- Chiodi decorativi -->
+  <circle cx="250" cy="512.5" r="3" fill="#8B6914" opacity="0.5"/>
+  <circle cx="350" cy="512.5" r="3" fill="#8B6914" opacity="0.5"/>
+  <circle cx="450" cy="512.5" r="3" fill="#8B6914" opacity="0.5"/>
+  
+  <!-- Asse di legno verticale (supporto) -->
+  <rect x="480" y="480" width="25" height="150" rx="5" fill="#D4A574" stroke="#B88652" stroke-width="2" opacity="0.4"/>
+  <!-- Chiodi sul supporto -->
+  <circle cx="492.5" cy="510" r="3" fill="#8B6914" opacity="0.5"/>
+  <circle cx="492.5" cy="570" r="3" fill="#8B6914" opacity="0.5"/>
+  
+  <!-- Metro da carpentiere appoggiato -->
+  <rect x="550" y="490" width="200" height="15" rx="7" fill="#F4D03F" stroke="#D4AC0D" stroke-width="2" opacity="0.3"/>
+  <!-- Linee metriche sul metro -->
+  <line x1="570" y1="497" x2="570" y2="505" stroke="#1C1C1C" stroke-width="1" opacity="0.3"/>
+  <line x1="630" y1="497" x2="630" y2="505" stroke="#1C1C1C" stroke-width="2" opacity="0.3"/>
+  <line x1="690" y1="497" x2="690" y2="505" stroke="#1C1C1C" stroke-width="1" opacity="0.3"/>
+  <!-- Maniglia del metro -->
+  <circle cx="550" cy="497.5" r="8" fill="#D4AC0D" opacity="0.3"/>
+  
+  <!-- Matita da carpentiere -->
+  <rect x="780" y="485" width="8" height="120" rx="2" fill="#F4D03F" stroke="#D4AC0D" stroke-width="1" opacity="0.3"/>
+  <!-- Punta della matita -->
+  <path d="M788 485 L792 505 L784 505 Z" fill="#FFA500" opacity="0.4"/>
+  <!-- Gomma della matita -->
+  <rect x="780" y="485" width="8" height="12" rx="2" fill="#FF69B4" opacity="0.4"/>
+  <!-- Fasciatura giallo/nero -->
+  <line x1="781" y1="510" x2="787" y2="510" stroke="#1C1C1C" stroke-width="1" opacity="0.3"/>
+  <line x1="781" y1="530" x2="787" y2="530" stroke="#1C1C1C" stroke-width="1" opacity="0.3"/>
+  
+  <!-- Gesso bianco -->
+  <rect x="820" y="510" width="15" height="60" rx="3" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1" opacity="0.3"/>
+  <!-- Linee sul gesso -->
+  <line x1="823" y1="530" x2="832" y2="530" stroke="#E0E0E0" stroke-width="0.5" opacity="0.4"/>
+  <line x1="823" y1="550" x2="832" y2="550" stroke="#E0E0E0" stroke-width="0.5" opacity="0.4"/>
+  
+  <!-- Metro pieghevole (srotolato) -->
+  <rect x="100" y="600" width="20" height="120" rx="3" fill="#F4D03F" stroke="#D4AC0D" stroke-width="2" opacity="0.3"/>
+  <!-- Sezioni piegate -->
+  <rect x="125" y="610" width="80" height="15" rx="2" fill="#F4D03F" stroke="#D4AC0D" stroke-width="1" opacity="0.3"/>
+  <rect x="210" y="625" width="80" height="15" rx="2" fill="#F4D03F" stroke="#D4AC0D" stroke-width="1" opacity="0.3"/>
+  <rect x="295" y="640" width="80" height="15" rx="2" fill="#F4D03F" stroke="#D4AC0D" stroke-width="1" opacity="0.3"/>
+  <!-- Linee metriche -->
+  <line x1="130" y1="617" x2="285" y2="617" stroke="#1C1C1C" stroke-width="1" opacity="0.2"/>
+  <line x1="215" y1="632" x2="285" y2="632" stroke="#1C1C1C" stroke-width="1" opacity="0.2"/>
+  
+  <!-- Squadra da carpentiere -->
+  <path d="M950 520 L950 620 L1050 620" stroke="#D4AC0D" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/>
+  <!-- Angolo -->
+  <circle cx="950" cy="520" r="8" fill="#D4AC0D" opacity="0.3"/>
+  <!-- Linee metriche sulla squadra -->
+  <line x1="955" y1="540" x2="965" y2="540" stroke="#1C1C1C" stroke-width="1" opacity="0.2"/>
+  <line x1="955" y1="570" x2="965" y2="570" stroke="#1C1C1C" stroke-width="1" opacity="0.2"/>
+  
+  <!-- Mattoni/pietre -->
+  <rect x="900" y="650" width="80" height="40" rx="3" fill="#D4A574" stroke="#B88652" stroke-width="1" opacity="0.3"/>
+  <rect x="920" y="635" width="80" height="40" rx="3" fill="#D4A574" stroke="#B88652" stroke-width="1" opacity="0.3"/>
+  <rect x="900" y="695" width="80" height="40" rx="3" fill="#D4A574" stroke="#B88652" stroke-width="1" opacity="0.3"/>
+  <!-- Linee dei mattoni -->
+  <line x1="920" y1="645" x2="920" y2="655" stroke="#B88652" stroke-width="1" opacity="0.3"/>
+  <line x1="940" y1="645" x2="940" y2="655" stroke="#B88652" stroke-width="1" opacity="0.3"/>
+  
+  <!-- Cono arancione/bianco -->
+  <path d="M600 680 L620 780 L580 780 Z" fill="#FFA500" opacity="0.3"/>
+  <line x1="590" y1="720" x2="610" y2="720" stroke="#FFFFFF" stroke-width="3" opacity="0.5"/>
+  <line x1="590" y1="740" x2="610" y2="740" stroke="#FFFFFF" stroke-width="3" opacity="0.5"/>
+  
+  <!-- Metro a nastro (arrotolato) -->
+  <circle cx="350" cy="650" r="25" fill="#F4D03F" stroke="#D4AC0D" stroke-width="2" opacity="0.3"/>
+  <circle cx="350" cy="650" r="18" fill="#D4AC0D" opacity="0.2"/>
+  <!-- Nastro che esce -->
+  <rect x="375" y="645" width="60" height="10" rx="2" fill="#F4D03F" stroke="#D4AC0D" stroke-width="1" opacity="0.3"/>
+  <line x1="385" y1="650" x2="425" y2="650" stroke="#1C1C1C" stroke-width="1" opacity="0.2"/>
+  
+  <!-- Texture leggera sabbia/terra -->
+  <circle cx="150" cy="750" r="3" fill="#E8D4B8" opacity="0.2"/>
+  <circle cx="300" cy="780" r="2" fill="#E8D4B8" opacity="0.2"/>
+  <circle cx="500" cy="760" r="2.5" fill="#E8D4B8" opacity="0.2"/>
+  <circle cx="700" cy="750" r="2" fill="#E8D4B8" opacity="0.2"/>
+  <circle cx="1000" cy="780" r="3" fill="#E8D4B8" opacity="0.2"/>
+</svg>

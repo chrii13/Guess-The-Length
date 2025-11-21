@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none" style="display: block;">
+  <!-- Cerchio giallo con bordo nero -->
+  <circle cx="40" cy="40" r="38" fill="#F4D03F" stroke="#1C1C1C" stroke-width="4"/>
+  
+  <!-- Stella a 5 punte perfettamente centrata all'interno del cerchio -->
+  <!-- Centro visivo della stella leggermente spostato in basso per centratura perfetta -->
+  <path d="M40 21.5 L45.52 33.16 L57.81 34.65 L48.81 43.28 L51.45 55.35 L40 49.8 L28.55 55.35 L31.19 43.28 L22.19 34.65 L34.48 33.16 Z" fill="#F4D03F" stroke="#1C1C1C" stroke-width="3" stroke-linejoin="round"/>
+</svg>

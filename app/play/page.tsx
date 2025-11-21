@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { Navbar } from '@/components/Navbar'
 import { Meter } from '@/components/Meter'
 import { CalibrationMeter } from '@/components/CalibrationMeter'
@@ -11,6 +12,8 @@ import { generateRandomLength, calculateError, pixelsToCm, formatLength, cmToPix
 import { calibrate, setCalibration } from '@/lib/calibration'
 import { saveGameSession, getUserBestScore, type RoundData } from '@/lib/scores'
 import { NewBestScore } from '@/components/NewBestScore'
+import { SvgIcon } from '@/components/SvgIcon'
+import { useTheme } from '@/hooks/useTheme'
 
 interface Round {
   target: number
@@ -21,6 +24,7 @@ interface Round {
 export default function PlayPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
+  const { theme, mounted: themeMounted, imageVersion } = useTheme()
   const [rounds, setRounds] = useState<Round[]>([])
   const [currentRound, setCurrentRound] = useState(0)
   const [currentAttempt, setCurrentAttempt] = useState(0)
@@ -174,8 +178,8 @@ export default function PlayPage() {
     return (
       <>
         <Navbar />
-        <main className="max-w-4xl mx-auto px-4 py-16 text-center">
-          <p className="text-xl text-gray-600">Caricamento...</p>
+        <main className="max-w-4xl mx-auto px-4 py-8 md:py-16 text-center">
+          <p className="text-lg md:text-xl text-primary-gray-medium dark:text-primary-gray-light">Caricamento...</p>
         </main>
       </>
     )
@@ -190,7 +194,7 @@ export default function PlayPage() {
     return (
       <>
         <Navbar />
-        <main className="max-w-4xl mx-auto px-4 py-16">
+        <main className="max-w-4xl mx-auto px-4 py-8 md:py-16">
           <CalibrationMeter 
             onCalibrated={(ratio) => {
               setCalibration(ratio)
@@ -206,18 +210,33 @@ export default function PlayPage() {
     return (
       <>
         <Navbar />
-        <main className="max-w-4xl mx-auto px-4 py-16 text-center">
-          <h1 className="text-4xl font-bold text-indigo-900 mb-8">Inizia a Giocare</h1>
-          <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+        <main className="max-w-4xl mx-auto px-4 py-8 md:py-16 text-center relative z-10">
+          <div className="inline-flex items-center justify-center w-[175px] h-[175px] md:w-[200px] md:h-[200px] flex mb-2 bg-transparent dark:bg-transparent">
+            <Image
+              key={`play-${theme}-${imageVersion}`}
+              src={`${themeMounted && theme === 'dark' ? "/assets/icons/play-dark.svg" : "/assets/icons/play.svg"}?v=${theme}-${imageVersion}`}
+              alt="Play Icon"
+              width={200}
+              height={200}
+              className="w-full h-full pointer-events-none object-contain pulse-scale"
+              style={{ backgroundColor: 'transparent', background: 'transparent', display: 'block', objectPosition: 'center', transformOrigin: 'center' }}
+              unoptimized
+            />
+          </div>
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary-gray-dark dark:text-primary-gray-light mb-4 md:mb-6 bg-gradient-to-r from-primary-gray-dark via-primary-gray-medium to-primary-gray-dark dark:from-primary-gray-light dark:via-primary-yellow dark:to-primary-gray-light bg-clip-text text-transparent">
+            Inizia a Giocare
+          </h1>
+          <p className="text-base md:text-lg text-primary-gray-medium dark:text-primary-gray-light mb-6 md:mb-8 max-w-2xl mx-auto">
             Allunga il metro per indovinare la lunghezza esatta. 
             <br />
-            <span className="font-semibold text-indigo-700">Andarci vicino conta solo a bocce...o quasi!</span>
+            <span className="font-bold text-primary-gray-dark dark:text-primary-gray-light">Andarci vicino conta solo a bocce...o quasi!</span>
           </p>
           <button
             onClick={startGame}
-            className="px-8 py-4 text-lg font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow-lg transform hover:scale-105 transition"
+            className="px-8 md:px-12 py-4 md:py-5 text-base md:text-lg font-bold bg-gradient-to-r from-primary-yellow to-primary-yellow-dark rounded-2xl-large hover:shadow-yellow-glow transition-all shadow-soft-lg transform hover:scale-105 active:scale-95"
+            style={{ color: '#1C1C1C' }}
           >
-            🎮 Inizia a Giocare 🎮
+             Inizia Partita 
           </button>
         </main>
       </>
@@ -238,48 +257,50 @@ export default function PlayPage() {
             onContinue={handleContinueFromBestScore}
           />
         )}
-        <main className="max-w-4xl mx-auto px-4 py-16 text-center">
-          <h1 className="text-4xl font-bold text-indigo-900 mb-8">Partita Terminata!</h1>
+        <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16 text-center relative z-10">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary-gray-dark dark:text-primary-gray-light mb-6 md:mb-8 bg-gradient-to-r from-primary-gray-dark via-primary-gray-medium to-primary-gray-dark dark:from-primary-gray-light dark:via-primary-yellow dark:to-primary-gray-light bg-clip-text text-transparent">
+            Partita Terminata!
+          </h1>
           
-          <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
+          <div className="bg-white/90 dark:bg-primary-gray-medium backdrop-blur-sm rounded-2xl-large shadow-soft-lg p-6 md:p-8 mb-6 md:mb-8 border border-primary-gray-light dark:border-primary-gray-medium">
             {/* Punteggio totale */}
             <div className="mb-6">
-              <p className="text-lg text-gray-600 mb-2">Punteggio di questa partita</p>
-              <p className="text-5xl font-bold text-indigo-700">{formatLength(totalScore)} cm</p>
+              <p className="text-base md:text-lg text-primary-gray-medium dark:text-primary-gray-light mb-2 font-medium">Punteggio di questa partita</p>
+              <p className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-gray-dark dark:text-primary-gray-light">{formatLength(totalScore)} cm</p>
             </div>
 
             {/* Miglior punteggio */}
             {bestScore !== null && (
-              <div className="mb-6 pt-6 border-t">
-                <p className="text-lg text-gray-600 mb-2">Il tuo miglior punteggio</p>
-                <p className="text-4xl font-bold text-indigo-600">{formatLength(bestScore)} cm</p>
+              <div className="mb-6 pt-6 border-t border-primary-gray-light dark:border-primary-gray-medium">
+                <p className="text-base md:text-lg text-primary-gray-medium dark:text-primary-gray-light mb-2 font-medium">Il tuo miglior punteggio</p>
+                <p className="text-3xl md:text-4xl font-bold text-primary-yellow-dark dark:text-primary-yellow">{formatLength(bestScore)} cm</p>
               </div>
             )}
 
             {/* Messaggio nuovo record */}
             {isNewRecord && bestScore !== null && !showNewBestScore && (
-              <div className="bg-yellow-100 border-2 border-yellow-400 rounded-lg p-4 mb-4">
-                <p className="text-xl font-bold text-yellow-800">🎉 Nuovo Record Personale! 🎉</p>
+              <div className="bg-primary-yellow/20 border-2 border-primary-yellow rounded-xl-large p-4 mb-4">
+                <p className="text-lg md:text-xl font-bold text-primary-yellow-dark">Nuovo Record Personale!</p>
               </div>
             )}
 
             {/* Messaggio primo punteggio */}
             {isFirstGame && (
-              <div className="bg-green-100 border-2 border-green-400 rounded-lg p-4 mb-4">
-                <p className="text-xl font-bold text-green-800">✨ Primo punteggio salvato! ✨</p>
+              <div className="bg-primary-blue/20 border-2 border-primary-blue rounded-xl-large p-4 mb-4">
+                <p className="text-lg md:text-xl font-bold text-primary-blue">Primo punteggio salvato!</p>
               </div>
             )}
 
             {/* Dettagli dei round */}
-            <div className="mt-6 pt-6 border-t">
-              <p className="text-sm font-semibold text-gray-700 mb-3">Dettagli dei Round:</p>
+            <div className="mt-6 pt-6 border-t border-primary-gray-light dark:border-primary-gray-medium">
+              <p className="text-sm md:text-base font-bold text-primary-gray-dark dark:text-primary-gray-light mb-3">Dettagli dei Round:</p>
               <div className="space-y-2 text-left max-w-md mx-auto">
                 {rounds.map((round, idx) => (
-                  <div key={idx} className="flex justify-between p-3 bg-gray-50 rounded-lg">
-                    <span className="font-medium text-gray-700">Round {idx + 1}:</span>
+                  <div key={idx} className="flex justify-between p-3 md:p-4 bg-primary-gray-light dark:bg-primary-gray-dark rounded-xl-large border border-primary-gray-light dark:border-primary-gray-medium">
+                    <span className="font-semibold text-primary-gray-dark dark:text-primary-gray-light">Round {idx + 1}:</span>
                     <div className="text-right">
-                      <span className="text-sm text-gray-600 block">Target: {formatLength(round.target)} cm</span>
-                      <span className="text-sm font-semibold text-indigo-700">Errore: {formatLength(round.bestError)} cm</span>
+                      <span className="text-xs md:text-sm text-primary-gray-medium dark:text-primary-gray-light block">Target: {formatLength(round.target)} cm</span>
+                      <span className="text-xs md:text-sm font-bold text-primary-yellow-dark dark:text-primary-yellow">Errore: {formatLength(round.bestError)} cm</span>
                     </div>
                   </div>
                 ))}
@@ -288,14 +309,14 @@ export default function PlayPage() {
 
             {/* Loading state */}
             {saving && (
-              <div className="mt-4 text-sm text-gray-500">
+              <div className="mt-4 text-sm md:text-base text-primary-gray-medium dark:text-primary-gray-light font-medium">
                 Salvataggio in corso...
               </div>
             )}
           </div>
 
           {/* Pulsanti azione */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
             <button
               onClick={() => {
                 setGameFinished(false)
@@ -306,28 +327,47 @@ export default function PlayPage() {
                 setShowNewBestScore(false)
                 startGame()
               }}
-              className="px-8 py-4 text-lg font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow-lg transform hover:scale-105 transition"
+              className="px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-bold bg-gradient-to-r from-primary-yellow to-primary-yellow-dark rounded-xl-large hover:shadow-yellow-glow transition-all shadow-soft-lg transform hover:scale-105 active:scale-95"
+              style={{ color: '#1C1C1C' }}
             >
-              🎮 Rigioca
+              Rigioca
             </button>
             <button
               onClick={() => router.push('/result')}
-              className="px-8 py-4 text-lg font-semibold text-indigo-600 bg-white border-2 border-indigo-600 rounded-lg hover:bg-indigo-50 shadow-lg transform hover:scale-105 transition"
+              className="px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-bold text-primary-gray-dark dark:text-primary-gray-light bg-white dark:bg-primary-gray-medium border-2 border-primary-yellow dark:border-primary-yellow-dark rounded-xl-large hover:bg-primary-yellow/10 dark:hover:bg-primary-yellow-dark/20 transition-all shadow-soft-lg transform hover:scale-105 active:scale-95"
             >
-              📊 Vedi Resoconto
+              Vedi Resoconto
             </button>
             <button
               onClick={() => router.push('/leaderboard')}
-              className="px-8 py-4 text-lg font-semibold text-indigo-600 bg-white border-2 border-indigo-600 rounded-lg hover:bg-indigo-50 shadow-lg transform hover:scale-105 transition"
+              className="px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-bold text-primary-gray-dark dark:text-primary-gray-light bg-white dark:bg-primary-gray-medium border-2 border-primary-yellow dark:border-primary-yellow-dark rounded-xl-large hover:bg-primary-yellow/10 dark:hover:bg-primary-yellow-dark/20 transition-all shadow-soft-lg transform hover:scale-105 active:scale-95"
             >
-              🏆 Classifica
+              Classifica
             </button>
-            <button
+            <div 
               onClick={() => router.push('/')}
-              className="px-8 py-4 text-lg font-semibold text-gray-600 bg-white border-2 border-gray-300 rounded-lg hover:bg-gray-50 shadow-lg transform hover:scale-105 transition"
+              className="bg-primary-yellow border-2 border-primary-yellow rounded-xl-large shadow-soft-lg p-2 md:p-3 flex items-center justify-center hover:bg-primary-yellow-dark transition-all transform hover:scale-105 active:scale-95 cursor-pointer overflow-hidden"
+              role="button"
+              tabIndex={0}
+              aria-label="Home"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  router.push('/')
+                }
+              }}
             >
-              🏠 Home
-            </button>
+              <Image
+                key={`home-${theme}-${imageVersion}`}
+                src={`${themeMounted && theme === 'dark' ? "/assets/icons/home-dark.svg" : "/assets/icons/home.svg"}?v=${theme}-${imageVersion}`}
+                alt="Home"
+                width={64}
+                height={64}
+                className="w-14 h-14 md:w-16 md:h-16 pointer-events-none"
+                style={{ backgroundColor: 'transparent', background: 'transparent', display: 'block', transform: 'scale(2.5)', transformOrigin: 'center', margin: '0 auto', marginTop: '8px' }}
+                unoptimized
+              />
+            </div>
           </div>
         </main>
       </>
@@ -343,30 +383,29 @@ export default function PlayPage() {
     return (
       <>
         <Navbar />
-        <main className="max-w-4xl mx-auto px-4 py-16 relative">
-          <CmReferenceBox />
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-indigo-900 mb-4">
+        <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16 relative z-10">
+          <div className="bg-white/90 dark:bg-primary-gray-medium backdrop-blur-sm rounded-2xl-large shadow-soft-lg p-6 md:p-8 border border-primary-gray-light dark:border-primary-gray-medium">
+            <div className="text-center mb-6 md:mb-8">
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary-gray-dark dark:text-primary-gray-light mb-4">
                 Round {currentRound + 1} di 3 - Completato!
               </h1>
               
-              <div className="bg-indigo-100 rounded-lg p-6 mb-6">
-                <p className="text-sm text-gray-600 mb-2">Lunghezza da indovinare</p>
-                <p className="text-3xl font-bold text-indigo-700 mb-4">
+              <div className="bg-primary-yellow/10 dark:bg-primary-yellow-dark/10 rounded-xl-large p-5 md:p-6 mb-6 border-2 border-primary-yellow/30 dark:border-primary-yellow-dark/30">
+                <p className="text-xs md:text-sm text-primary-gray-medium dark:text-primary-gray-light mb-2 font-medium">Lunghezza da indovinare</p>
+                <p className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary-gray-dark dark:text-primary-gray-light mb-4">
                   {formatLength(currentTarget)} cm
                 </p>
                 
-                <div className="mt-4 pt-4 border-t border-indigo-200">
-                  <p className="text-sm text-gray-600 mb-2">Risultato migliore</p>
-                  <p className="text-4xl font-bold text-green-600">
+                <div className="mt-4 pt-4 border-t border-primary-yellow/30 dark:border-primary-yellow-dark/30">
+                  <p className="text-xs md:text-sm text-primary-gray-medium dark:text-primary-gray-light mb-2 font-medium">Risultato migliore</p>
+                  <p className="text-3xl md:text-4xl font-bold text-primary-yellow-dark dark:text-primary-yellow">
                     Errore: {formatLength(currentBestError)} cm
                   </p>
                 </div>
               </div>
 
-              <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                <p className="text-sm font-semibold text-gray-700 mb-2">I tuoi tentativi:</p>
+              <div className="bg-primary-gray-light dark:bg-primary-gray-dark rounded-xl-large p-4 md:p-5 mb-6 border border-primary-gray-light dark:border-primary-gray-medium">
+                <p className="text-xs md:text-sm font-bold text-primary-gray-dark dark:text-primary-gray-light mb-3">I tuoi tentativi:</p>
                 <div className="space-y-2">
                   {attempts.map((attempt, idx) => {
                     const error = calculateError(attempt, currentTarget)
@@ -374,18 +413,18 @@ export default function PlayPage() {
                     return (
                       <div 
                         key={idx} 
-                        className={`flex justify-between items-center p-2 rounded ${
-                          isBest ? 'bg-green-100 border-2 border-green-400' : 'bg-white'
+                        className={`flex justify-between items-center p-3 md:p-4 rounded-xl-large ${
+                          isBest ? 'bg-primary-yellow/20 dark:bg-primary-yellow-dark/20 border-2 border-primary-yellow dark:border-primary-yellow-dark' : 'bg-white dark:bg-primary-gray-medium border border-primary-gray-light dark:border-primary-gray-medium'
                         }`}
                       >
-                        <span className="text-sm text-gray-700">
+                        <span className="text-xs md:text-sm text-primary-gray-dark dark:text-primary-gray-light font-medium">
                           Tentativo {idx + 1}: {formatLength(attempt)} cm
                         </span>
-                        <span className={`text-sm font-semibold ${
-                          isBest ? 'text-green-700' : 'text-gray-600'
+                        <span className={`text-xs md:text-sm font-bold ${
+                          isBest ? 'text-primary-yellow-dark dark:text-primary-yellow' : 'text-primary-gray-medium dark:text-primary-gray-light'
                         }`}>
                           Errore: {formatLength(error)} cm
-                          {isBest && ' ⭐'}
+                          {isBest && ' • Migliore'}
                         </span>
                       </div>
                     )
@@ -395,7 +434,8 @@ export default function PlayPage() {
 
               <button
                 onClick={handleNextRound}
-                className="px-8 py-4 text-lg font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow-lg transform hover:scale-105 transition"
+                className="px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-bold bg-gradient-to-r from-primary-yellow to-primary-yellow-dark rounded-xl-large hover:shadow-yellow-glow transition-all shadow-soft-lg transform hover:scale-105 active:scale-95"
+                style={{ color: '#1C1C1C' }}
               >
                 {currentRound < 2 ? 'Prossimo Round →' : 'Vedi Risultato Finale'}
               </button>
@@ -409,30 +449,28 @@ export default function PlayPage() {
   return (
     <>
       <Navbar />
-      <main className="max-w-4xl mx-auto px-4 py-16 relative">
-        {/* Riferimento 1cm in alto a sinistra */}
-        <CmReferenceBox />
-        
-        <div className="bg-white rounded-lg shadow-lg p-8 mt-32">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-indigo-900 mb-4">
+        <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16 relative z-10">
+          <div className="bg-white/90 dark:bg-primary-gray-medium backdrop-blur-sm rounded-2xl-large shadow-soft-lg p-6 md:p-8 border border-primary-gray-light dark:border-primary-gray-medium relative">
+            <CmReferenceBox />
+            <div className="text-center mb-6 md:mb-8">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary-gray-dark dark:text-primary-gray-light mb-3 md:mb-4">
               Round {currentRound + 1} di 3
             </h1>
-            <p className="text-lg text-gray-600 mb-2">
+            <p className="text-base md:text-lg text-primary-gray-medium dark:text-primary-gray-light mb-3 md:mb-4 font-medium">
               Tentativo {currentAttempt + 1} di 2
             </p>
-            <div className="bg-indigo-100 rounded-lg p-4 mb-4">
-              <p className="text-sm text-gray-600 mb-1">Lunghezza da indovinare</p>
-              <p className="text-4xl font-bold text-indigo-700">
+            <div className="bg-primary-yellow/10 dark:bg-primary-yellow-dark/10 rounded-xl-large p-4 md:p-6 mb-4 md:mb-6 border-2 border-primary-yellow/30 dark:border-primary-yellow-dark/30">
+              <p className="text-xs md:text-sm text-primary-gray-medium dark:text-primary-gray-light mb-1 md:mb-2 font-medium">Lunghezza da indovinare</p>
+              <p className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary-gray-dark dark:text-primary-gray-light">
                 {formatLength(currentTarget)} cm
               </p>
             </div>
             {attempts.length > 0 && (
-              <div className="mt-4 space-y-1">
+              <div className="mt-4 space-y-2">
                 {attempts.map((attempt, idx) => {
                   const error = calculateError(attempt, currentTarget)
                   return (
-                    <p key={idx} className="text-sm text-gray-600">
+                    <p key={idx} className="text-xs md:text-sm text-primary-gray-medium dark:text-primary-gray-light font-medium">
                       Tentativo {idx + 1}: {formatLength(attempt)} cm 
                       (errore: {formatLength(error)} cm)
                     </p>
@@ -442,7 +480,7 @@ export default function PlayPage() {
             )}
           </div>
 
-          <div className="mb-8">
+          <div className="mb-6 md:mb-8">
             <div className="flex items-center justify-center">
               {/* Metro giallo allungabile (centrato, senza riferimento a sinistra) */}
               <Meter
@@ -458,7 +496,7 @@ export default function PlayPage() {
             <button
               onClick={handleConfirm}
               disabled={roundComplete}
-              className="px-8 py-4 text-lg font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow-lg transform hover:scale-105 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-bold text-primary-gray-dark dark:text-primary-gray-dark bg-gradient-to-r from-primary-yellow to-primary-yellow-dark rounded-xl-large hover:shadow-yellow-glow transition-all shadow-soft-lg transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               Conferma Tentativo
             </button>

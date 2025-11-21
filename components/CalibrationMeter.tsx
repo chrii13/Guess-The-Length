@@ -78,7 +78,7 @@ export function CalibrationMeter({ onCalibrated }: CalibrationMeterProps) {
   }
 
   // Calcola quante lettere mostrare in base alla lunghezza
-  const text = "Meter Game"
+  const text = "Guess the Length"
   const minWidthPerChar = 8 // Pixel minimi per carattere
   const visibleChars = Math.floor((meterLength - 80) / minWidthPerChar) // 80px per le maniglie
   const displayText = text.substring(0, Math.max(0, Math.min(text.length, visibleChars)))
@@ -100,7 +100,7 @@ export function CalibrationMeter({ onCalibrated }: CalibrationMeterProps) {
             <li>Guarda il riferimento di <strong>1 centimetro</strong> a sinistra (blu)</li>
             <li>Allinea il metro giallo con il riferimento: il metro deve essere esattamente della stessa lunghezza</li>
             <li>Trascina la maniglia destra del metro per allungarlo o rimpicciolirlo</li>
-            <li>Quando il metro corrisponde esattamente al riferimento, clicca su "Conferma Calibrazione"</li>
+            <li>Quando il metro corrisponde esattamente al riferimento, clicca su &quot;Conferma Calibrazione&quot;</li>
           </ol>
         </div>
 
@@ -174,7 +174,7 @@ export function CalibrationMeter({ onCalibrated }: CalibrationMeterProps) {
                 {/* Bordo inferiore */}
                 <div className="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-b from-yellow-600 to-yellow-800 opacity-80 rounded-b-lg"></div>
 
-                {/* Scritta "Meter Game" che si adatta alla lunghezza */}
+                {/* Scritta "Guess the Length" che si adatta alla lunghezza */}
                 <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
                   <span 
                     className="font-bold text-yellow-900 select-none"

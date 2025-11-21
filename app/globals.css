@@ -7,16 +7,40 @@ html {
 }
 
 body {
-  @apply bg-gradient-to-br from-blue-50 to-indigo-100;
+  @apply bg-primary-gray-light;
   min-height: 100%;
   display: flex;
   flex-direction: column;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/assets/background-construction.svg');
+  background-repeat: repeat;
+  background-size: 800px 600px;
+  background-position: 0 0;
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Dark mode background */
+.dark body::before {
+  opacity: 0.05;
 }
 
 #__next {
   flex: 1;
   display: flex;
   flex-direction: column;
+  position: relative;
+  z-index: 1;
 }
 
 /* Animazione coriandoli */
@@ -39,14 +63,184 @@ body {
 @keyframes pulse-glow {
   0%, 100% {
     transform: scale(1);
-    box-shadow: 0 0 20px rgba(234, 179, 8, 0.5);
+    box-shadow: 0 0 20px rgba(244, 208, 63, 0.5);
   }
   50% {
     transform: scale(1.05);
-    box-shadow: 0 0 30px rgba(234, 179, 8, 0.8);
+    box-shadow: 0 0 30px rgba(244, 208, 63, 0.8);
   }
 }
 
 .pulse-glow {
   animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Animazione pulsante per il logo del miglior punteggio */
+@keyframes pulse-scale {
+  0%, 100% {
+    transform: scale(1.5);
+  }
+  50% {
+    transform: scale(1.7);
+  }
+}
+
+.pulse-scale {
+  animation: pulse-scale 2s ease-in-out infinite;
+}
+
+/* Smooth transitions */
+* {
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Fix per caratteri con discendenti (g, j, p, q, y) nel titolo principale */
+h1.bg-clip-text {
+  padding-bottom: 0.35rem !important;
+  overflow: visible !important;
+  line-height: 1.25 !important;
+  display: inline-block;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  h1.bg-clip-text {
+    padding-bottom: 0.45rem !important;
+    line-height: 1.3 !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  h1.bg-clip-text {
+    padding-bottom: 0.5rem !important;
+    line-height: 1.35 !important;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F4F6F7;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #1C1C1C;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D4AC0D;
+  border-radius: 5px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #D4AC0D;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #F4D03F;
+}
+
+/* Dark mode support */
+.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  @apply bg-primary-gray-dark;
+  color: #F4F6F7;
+}
+
+/* Miglioramenti contrasto tema scuro */
+.dark .text-primary-gray-medium {
+  color: #E0E0E0;
+}
+
+.dark .text-primary-gray-dark {
+  color: #F4F6F7;
+}
+
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: #2E2E2E;
+  color: #F4F6F7;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #A0A0A0;
+}
+
+/* Rimuovi sfondi bianchi dai tag object in dark mode */
+.dark object {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+/* Forza trasparenza su tutti i tag object */
+object {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Rimuovi eventuali sfondi dai container che contengono direttamente loghi */
+.dark [class*="flex"][class*="items-center"][class*="justify-center"]:has(object),
+.dark [class*="inline-flex"][class*="items-center"][class*="justify-center"]:has(object),
+[class*="flex"][class*="items-center"][class*="justify-center"]:has(object),
+[class*="inline-flex"][class*="items-center"][class*="justify-center"]:has(object) {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Rimuovi sfondi bianchi dai container con classi specifiche che contengono loghi */
+.dark .w-16.h-16,
+.dark .w-12.h-12,
+.dark .w-10.h-10,
+.dark .w-24.h-24,
+.dark .w-32.h-32 {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Rimuovi sfondi bianchi dai container che potrebbero avere bg-white o bg-gradient */
+.dark div[class*="bg-white"][class*="rounded"]:has(object),
+.dark div[class*="bg-gradient"][class*="rounded"]:has(object),
+div[class*="bg-white"][class*="rounded"]:has(object),
+div[class*="bg-gradient"][class*="rounded"]:has(object) {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Stile specifico per rimuovere sfondi dai tag object e dai loro iframe interni */
+object::before,
+object::after {
+  display: none !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Forza trasparenza anche all'interno degli iframe generati dai tag object */
+.dark object,
+object {
+  mix-blend-mode: normal !important;
+}
+
+/* Rimuovi eventuali ombre o bordi bianchi */
+.dark object,
+object {
+  box-shadow: none !important;
+  border: none !important;
+  outline: none !important;
+}
+
+/* Rimuovi sfondo bianco dai contenitori con dimensioni specifiche che contengono object */
+.dark [class*="w-"][class*="h-"]:has(object) {
+  background: transparent !important;
+  background-color: transparent !important;
 }
