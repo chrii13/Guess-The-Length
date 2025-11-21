@@ -166,7 +166,7 @@ export default function RegisterPage() {
         data: {
           username: trimmedUsername,
         },
-        emailRedirectTo: typeof window !== 'undefined' ? `${window.location.origin}/` : undefined,
+        emailRedirectTo: typeof window !== 'undefined' ? `${window.location.origin}/auth/verify` : undefined,
       },
     })
 
