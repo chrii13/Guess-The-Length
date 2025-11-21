@@ -26,9 +26,11 @@ const supabaseAdmin = supabaseUrl && supabaseServiceRoleKey
 export async function POST(request: NextRequest) {
   try {
     // Applica tutte le protezioni di sicurezza (CSRF, Content-Type, Rate Limiting, Sanitizzazione)
+    // NOTA: requireCsrf è true ma la verifica CSRF controlla Origin/Referer, che dovrebbe essere presente
+    // per richieste same-origin dal browser
     const security = await applyApiSecurity(request, {
       rateLimit: checkEmailRateLimitConfig, // Configurato da variabili d'ambiente
-      requireCsrf: true,
+      requireCsrf: true, // CSRF verifica Origin/Referer per same-origin
       requireContentType: true,
       maxBodySize: checkEmailMaxBodySize, // Configurato da variabili d'ambiente
     })

@@ -95,6 +95,10 @@ export default function RegisterPage() {
 
     // IMPORTANTE: Verifica se l'email esiste già PRIMA di chiamare signUp
     // Usa l'endpoint API server-side per verificare se l'email esiste
+    // Questo controllo è OBBLIGATORIO - se fallisce, blocca la registrazione
+    let emailCheckSuccessful = false
+    let emailExists = false
+    
     try {
       const checkEmailResponse = await fetch('/api/check-email', {
         method: 'POST',
@@ -105,9 +109,11 @@ export default function RegisterPage() {
       })
 
       if (checkEmailResponse.ok) {
-        const { exists } = await checkEmailResponse.json()
+        const data = await checkEmailResponse.json()
+        emailExists = data.exists === true
+        emailCheckSuccessful = true
         
-        if (exists) {
+        if (emailExists) {
           // L'email esiste già - messaggio chiaro con suggerimento di accedere
           setError('Questa email è già registrata. Accedi se hai già un account, oppure usa un\'altra email.')
           setLoading(false)
@@ -115,13 +121,40 @@ export default function RegisterPage() {
           return
         }
       } else {
-        // Se l'endpoint fallisce, logga ma continua (il server potrebbe non essere configurato)
-        console.warn('Email check endpoint failed with status:', checkEmailResponse.status, 'continuing with registration')
+        // Se l'endpoint fallisce, blocca la registrazione per sicurezza
+        const errorText = await checkEmailResponse.text().catch(() => 'Unknown error')
+        let errorMessage = 'Impossibile verificare se l\'email è già in uso.'
+        
+        // Messaggi di errore più specifici in base allo status
+        if (checkEmailResponse.status === 403) {
+          errorMessage = 'Errore di sicurezza durante la verifica email. Ricarica la pagina e riprova.'
+        } else if (checkEmailResponse.status === 429) {
+          errorMessage = 'Troppe richieste. Attendi un momento e riprova.'
+        } else if (checkEmailResponse.status >= 500) {
+          errorMessage = 'Errore del server durante la verifica email. Riprova più tardi.'
+        }
+        
+        console.error('Email check endpoint failed with status:', checkEmailResponse.status, 'error:', errorText)
+        setError(errorMessage)
+        setLoading(false)
+        setAttempts(prev => prev + 1)
+        return
       }
     } catch (error) {
-      // Se l'endpoint non è disponibile, logga ma continua
-      console.warn('Email check endpoint error:', error)
-      // Continua con la registrazione, il server controllerà comunque
+      // Se l'endpoint non è disponibile o c'è un errore di rete, blocca la registrazione
+      console.error('Email check endpoint error:', error)
+      setError('Impossibile verificare se l\'email è già in uso. Controlla la connessione e riprova.')
+      setLoading(false)
+      setAttempts(prev => prev + 1)
+      return
+    }
+    
+    // Se il controllo email non è andato a buon fine, blocca la registrazione
+    if (!emailCheckSuccessful) {
+      setError('Impossibile verificare se l\'email è già in uso. Riprova più tardi.')
+      setLoading(false)
+      setAttempts(prev => prev + 1)
+      return
     }
 
     // Registra l'utente con metadata che include l'username
