@@ -452,7 +452,7 @@ export default function PlayPage() {
         <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16 relative z-10">
           <div className="bg-white/90 dark:bg-primary-gray-medium backdrop-blur-sm rounded-2xl-large shadow-soft-lg p-6 md:p-8 border border-primary-gray-light dark:border-primary-gray-medium relative">
             <CmReferenceBox />
-            <div className="text-center mb-6 md:mb-8">
+            <div className="text-center mb-6 md:mb-8 pt-20 md:pt-0">
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary-gray-dark dark:text-primary-gray-light mb-3 md:mb-4">
               Round {currentRound + 1} di 3
             </h1>
