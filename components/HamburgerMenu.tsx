@@ -155,32 +155,38 @@ export function HamburgerMenu() {
               </div>
               {/* Classifica */}
               {user && (
-                <button
-                  onClick={handleLeaderboard}
-                  className="w-full flex items-center p-3 rounded-xl-large hover:bg-primary-gray-light dark:hover:bg-primary-gray-medium transition-colors group"
-                >
-                  <span className="font-semibold text-primary-gray-dark dark:text-primary-gray-light text-left">Classifica</span>
-                </button>
+                <div className="mb-3">
+                  <button
+                    onClick={handleLeaderboard}
+                    className="w-full flex items-center p-3 rounded-xl-large hover:bg-primary-gray-light dark:hover:bg-primary-gray-medium transition-colors group"
+                  >
+                    <span className="font-semibold text-primary-gray-dark dark:text-primary-gray-light text-left">Classifica</span>
+                  </button>
+                </div>
               )}
               
               {/* Resoconto */}
               {user && (
-                <button
-                  onClick={handleResult}
-                  className="w-full flex items-center p-3 rounded-xl-large hover:bg-primary-gray-light dark:hover:bg-primary-gray-medium transition-colors group"
-                >
-                  <span className="font-semibold text-primary-gray-dark dark:text-primary-gray-light text-left">Resoconto</span>
-                </button>
+                <div className="mb-3">
+                  <button
+                    onClick={handleResult}
+                    className="w-full flex items-center p-3 rounded-xl-large hover:bg-primary-gray-light dark:hover:bg-primary-gray-medium transition-colors group"
+                  >
+                    <span className="font-semibold text-primary-gray-dark dark:text-primary-gray-light text-left">Resoconto</span>
+                  </button>
+                </div>
               )}
 
               {/* Profilo */}
               {user && (
-                <button
-                  onClick={handleProfile}
-                  className="w-full flex items-center p-3 rounded-xl-large hover:bg-primary-gray-light dark:hover:bg-primary-gray-medium transition-colors group"
-                >
-                  <span className="font-semibold text-primary-gray-dark dark:text-primary-gray-light text-left">Profilo</span>
-                </button>
+                <div className="mb-3">
+                  <button
+                    onClick={handleProfile}
+                    className="w-full flex items-center p-3 rounded-xl-large hover:bg-primary-gray-light dark:hover:bg-primary-gray-medium transition-colors group"
+                  >
+                    <span className="font-semibold text-primary-gray-dark dark:text-primary-gray-light text-left">Profilo</span>
+                  </button>
+                </div>
               )}
             </div>
             {/* Footer con Logout in basso a sinistra */}
