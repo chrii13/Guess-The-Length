@@ -454,8 +454,8 @@ export default function PlayPage() {
             )}
           </div>
 
-          <div className="mb-6 md:mb-8">
-            <div className="flex items-center justify-center">
+          <div className="mb-6 md:mb-8 overflow-hidden">
+            <div className="flex items-center justify-center w-full">
               {/* Metro giallo allungabile (centrato, senza riferimento a sinistra) */}
               <Meter
                 length={meterLength}

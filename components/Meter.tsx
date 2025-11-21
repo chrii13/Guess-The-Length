@@ -10,16 +10,90 @@ interface MeterProps {
 
 export function Meter({ length, onLengthChange, maxLength }: MeterProps) {
   const [isDragging, setIsDragging] = useState(false)
+  const [availableWidth, setAvailableWidth] = useState<number>(maxLength)
   const meterRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
   const startXRef = useRef(0)
   const startLengthRef = useRef(0)
+  
+  // Assicurati che la lunghezza corrente non superi mai availableWidth quando availableWidth cambia
+  // Questo è importante quando lo schermo viene ridimensionato o ruotato
+  useEffect(() => {
+    // Solo aggiorna se la lunghezza supera effettivamente availableWidth
+    // e availableWidth è stato calcolato (non è il valore iniziale)
+    if (length > availableWidth && availableWidth > 0 && availableWidth < maxLength) {
+      const newLength = Math.min(length, availableWidth)
+      // Solo se la differenza è significativa (>2px) per evitare micro-aggiustamenti
+      if (Math.abs(newLength - length) > 2) {
+        onLengthChange(newLength)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [availableWidth]) // Solo quando availableWidth cambia
+  
+  // Calcola la larghezza disponibile in base allo schermo
+  useEffect(() => {
+    const calculateAvailableWidth = () => {
+      if (typeof window === 'undefined') {
+        setAvailableWidth(maxLength)
+        return
+      }
+      
+      // Usa il container se disponibile, altrimenti window.innerWidth
+      let containerWidth = window.innerWidth
+      
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect()
+        containerWidth = rect.width
+      }
+      
+      // Considera il padding della pagina e del contenitore
+      const isMobile = window.innerWidth < 768
+      // Padding pagina: px-4 (16px) su mobile, px-8 (32px) su desktop
+      const pagePadding = isMobile ? 32 : 64
+      // Padding contenitore: p-6 (24px) su mobile, p-8 (32px) su desktop  
+      const containerPadding = isMobile ? 48 : 64
+      
+      // Larghezza disponibile = larghezza container - padding - margini di sicurezza
+      // Margine di sicurezza di 80px per assicurarsi che il metro non esca mai dallo schermo
+      // Include spazio per le maniglie (40px x 2) e margine extra
+      const available = Math.max(0, containerWidth - pagePadding - containerPadding - 80)
+      
+      // Il maxLength effettivo è il minimo tra maxLength teorico e larghezza disponibile
+      // Assicuriamoci che sia almeno 150px per permettere il gioco (circa 4cm su schermi piccoli)
+      const minLength = 150
+      const effectiveMaxLength = Math.max(minLength, Math.min(maxLength, available))
+      
+      setAvailableWidth(effectiveMaxLength)
+    }
+    
+    // Calcola immediatamente
+    calculateAvailableWidth()
+    
+    // Ricalcola su resize e orientation change con debounce
+    let timeoutId: NodeJS.Timeout
+    const debouncedCalculate = () => {
+      clearTimeout(timeoutId)
+      timeoutId = setTimeout(calculateAvailableWidth, 100)
+    }
+    
+    window.addEventListener('resize', debouncedCalculate)
+    window.addEventListener('orientationchange', debouncedCalculate)
+    
+    return () => {
+      clearTimeout(timeoutId)
+      window.removeEventListener('resize', debouncedCalculate)
+      window.removeEventListener('orientationchange', debouncedCalculate)
+    }
+  }, [maxLength])
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDragging || !meterRef.current) return
 
       const deltaX = e.clientX - startXRef.current
-      const newLength = Math.max(50, Math.min(maxLength, startLengthRef.current + deltaX))
+      // Usa availableWidth invece di maxLength per limitare in base allo schermo
+      const newLength = Math.max(50, Math.min(availableWidth, startLengthRef.current + deltaX))
       onLengthChange(newLength)
     }
 
@@ -27,16 +101,39 @@ export function Meter({ length, onLengthChange, maxLength }: MeterProps) {
       setIsDragging(false)
     }
 
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isDragging || !meterRef.current) return
+      e.preventDefault()
+      
+      const touch = e.touches[0]
+      if (!touch) return
+      
+      const deltaX = touch.clientX - startXRef.current
+      // Usa availableWidth invece di maxLength per limitare in base allo schermo
+      const newLength = Math.max(50, Math.min(availableWidth, startLengthRef.current + deltaX))
+      onLengthChange(newLength)
+    }
+
+    const handleTouchEnd = () => {
+      setIsDragging(false)
+    }
+
     if (isDragging) {
       window.addEventListener('mousemove', handleMouseMove)
       window.addEventListener('mouseup', handleMouseUp)
+      window.addEventListener('touchmove', handleTouchMove, { passive: false })
+      window.addEventListener('touchend', handleTouchEnd)
+      window.addEventListener('touchcancel', handleTouchEnd)
     }
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove)
       window.removeEventListener('mouseup', handleMouseUp)
+      window.removeEventListener('touchmove', handleTouchMove)
+      window.removeEventListener('touchend', handleTouchEnd)
+      window.removeEventListener('touchcancel', handleTouchEnd)
     }
-  }, [isDragging, maxLength, onLengthChange])
+  }, [isDragging, availableWidth, onLengthChange])
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -47,23 +144,31 @@ export function Meter({ length, onLengthChange, maxLength }: MeterProps) {
 
   const handleTouchStart = (e: React.TouchEvent) => {
     e.preventDefault()
+    e.stopPropagation()
     const touch = e.touches[0]
+    if (!touch) return
     setIsDragging(true)
     startXRef.current = touch.clientX
     startLengthRef.current = length
   }
 
+  // Gestione touch locale (backup, il principale è nel useEffect globale)
   const handleTouchMove = (e: React.TouchEvent) => {
-    e.preventDefault()
     if (!isDragging || !meterRef.current) return
+    e.preventDefault()
+    e.stopPropagation()
     const touch = e.touches[0]
+    if (!touch) return
+    
     const deltaX = touch.clientX - startXRef.current
-    const newLength = Math.max(50, Math.min(maxLength, startLengthRef.current + deltaX))
+    // Usa availableWidth invece di maxLength per limitare in base allo schermo
+    const newLength = Math.max(50, Math.min(availableWidth, startLengthRef.current + deltaX))
     onLengthChange(newLength)
   }
 
   const handleTouchEnd = (e: React.TouchEvent) => {
     e.preventDefault()
+    e.stopPropagation()
     setIsDragging(false)
   }
 
@@ -127,15 +232,25 @@ export function Meter({ length, onLengthChange, maxLength }: MeterProps) {
   }, [roundedLength]) // Dipende dalla lunghezza arrotondata a multipli di 20px
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <div
-        ref={meterRef}
-        className="relative cursor-grab active:cursor-grabbing select-none"
-        onMouseDown={handleMouseDown}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
+    <div className="flex flex-col items-center gap-4 w-full">
+      {/* Container con overflow-hidden per prevenire che il metro esca dallo schermo */}
+      <div 
+        ref={containerRef}
+        className="w-full overflow-hidden flex justify-center"
+        style={{ maxWidth: '100%' }}
       >
+        <div
+          ref={meterRef}
+          className="relative cursor-grab active:cursor-grabbing select-none"
+          onMouseDown={handleMouseDown}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          style={{ 
+            maxWidth: '100%',
+            touchAction: 'none' // Previene scroll durante il drag su mobile
+          }}
+        >
         {/* Metro giallo realistico senza linee di misurazione */}
         <div
           className="relative rounded-xl-large shadow-soft-lg overflow-hidden"
@@ -225,8 +340,9 @@ export function Meter({ length, onLengthChange, maxLength }: MeterProps) {
           <div className="absolute right-0 top-0 bottom-0 w-0.5 bg-gradient-to-l from-primary-gray-dark opacity-15 rounded-r-xl-large"></div>
         </div>
       </div>
+      </div>
 
-      <p className="text-xs md:text-sm text-primary-gray-medium dark:text-primary-gray-light text-center max-w-md font-medium">
+      <p className="text-xs md:text-sm text-primary-gray-medium dark:text-primary-gray-light text-center max-w-md font-medium px-2">
         Trascina la maniglia destra per allungare il metro. 
         <br />
         <span className="font-bold text-primary-gray-dark dark:text-primary-gray-light">Consiglio: Usare un righello non è la scelta migliore...</span>
