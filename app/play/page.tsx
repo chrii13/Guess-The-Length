@@ -55,8 +55,12 @@ export default function PlayPage() {
   }, [user, loading, router])
 
   const startGame = () => {
+    // Su mobile, limitare le lunghezze target a 8cm per evitare che il metro esca dallo schermo
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+    const maxTargetCm = isMobile ? 8 : 15
+    
     const newRounds: Round[] = Array.from({ length: 3 }, () => ({
-      target: generateRandomLength(),
+      target: generateRandomLength(maxTargetCm),
       attempts: [],
       bestError: Infinity,
     }))

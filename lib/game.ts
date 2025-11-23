@@ -1,10 +1,10 @@
 // Importa le funzioni di calibrazione
 import { pixelsToCm as calibratedPixelsToCm, cmToPixels as calibratedCmToPixels } from './calibration'
 
-// Genera una lunghezza casuale tra 1 e 15 cm con 2 decimali
-export function generateRandomLength(): number {
+// Genera una lunghezza casuale tra 1 e maxCm (default 15) cm con 2 decimali
+export function generateRandomLength(maxCm: number = 15): number {
   const min = 100 // 1.00 cm in centesimi
-  const max = 1500 // 15.00 cm in centesimi
+  const max = Math.round(maxCm * 100) // maxCm in centesimi (es. 800 per 8cm, 1500 per 15cm)
   const random = Math.floor(Math.random() * (max - min + 1)) + min
   return random / 100 // Converti in cm con 2 decimali
 }
