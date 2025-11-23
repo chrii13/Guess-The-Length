@@ -42,34 +42,16 @@ export function Meter({ length, onLengthChange, maxLength }: MeterProps) {
       
       const isMobile = window.innerWidth < 768
       
-      // Su mobile, limitare a 8cm per evitare che il metro esca dallo schermo
+      // Su mobile, permettere estensione fino a 8cm
       if (isMobile) {
         // Calcola 8cm in pixel usando la funzione di calibrazione
         const mobileMaxCm = 8
         const mobileMaxPixels = cmToPixels(mobileMaxCm)
         
-        // Calcola anche la larghezza disponibile nello schermo per essere sicuri
-        let containerWidth = window.innerWidth
-        if (containerRef.current) {
-          const rect = containerRef.current.getBoundingClientRect()
-          containerWidth = rect.width
-        }
-        
-        // Padding pagina: px-4 (16px x 2 = 32px) su mobile
-        const pagePadding = 32
-        // Padding contenitore: p-6 (24px x 2 = 48px) su mobile  
-        const containerPadding = 48
-        // Margine di sicurezza per le maniglie (40px x 2 = 80px)
-        const safetyMargin = 80
-        
-        const availableWidth = containerWidth - pagePadding - containerPadding - safetyMargin
-        
-        // Usa il minimo tra 8cm in pixel e la larghezza disponibile
-        // per assicurarsi che il metro non esca mai dallo schermo
-        const effectiveMobileMax = Math.min(mobileMaxPixels, availableWidth)
-        
-        // Assicuriamoci che sia almeno 150px (circa 4cm) per permettere il gioco
-        setAvailableWidth(Math.max(150, effectiveMobileMax))
+        // Permetti sempre l'estensione fino a 8cm su mobile
+        // Non limitare in base alla larghezza dello schermo
+        // (le lunghezze target sono già limitate a 8cm, quindi va bene)
+        setAvailableWidth(mobileMaxPixels)
         return
       }
       
@@ -264,11 +246,14 @@ export function Meter({ length, onLengthChange, maxLength }: MeterProps) {
 
   return (
     <div className="flex flex-col items-center gap-4 w-full">
-      {/* Container con overflow-hidden per contenere il metro nello schermo */}
+      {/* Container: su mobile permette scroll orizzontale quando metro > schermo (fino a 8cm) */}
       <div 
         ref={containerRef}
-        className="w-full overflow-hidden flex justify-center"
-        style={{ maxWidth: '100%' }}
+        className="w-full overflow-x-auto overflow-y-hidden flex justify-start md:justify-center md:overflow-hidden"
+        style={{ 
+          maxWidth: '100%',
+          WebkitOverflowScrolling: 'touch'
+        }}
       >
         <div
           ref={meterRef}
