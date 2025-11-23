@@ -18,7 +18,15 @@ export function Meter({ length, onLengthChange, maxLength }: MeterProps) {
   
   // Assicurati che la lunghezza corrente non superi mai availableWidth quando availableWidth cambia
   // Questo è importante quando lo schermo viene ridimensionato o ruotato
+  // SU MOBILE: non limitare se availableWidth === maxLength (permette estensione completa)
   useEffect(() => {
+    // Su mobile, se availableWidth è uguale a maxLength, non limitare la lunghezza
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+    if (isMobile && availableWidth === maxLength) {
+      // Non limitare su mobile se abbiamo permesso l'estensione completa
+      return
+    }
+    
     // Solo aggiorna se la lunghezza supera effettivamente availableWidth
     // e availableWidth è stato calcolato (non è il valore iniziale)
     if (length > availableWidth && availableWidth > 0 && availableWidth < maxLength) {
@@ -29,7 +37,7 @@ export function Meter({ length, onLengthChange, maxLength }: MeterProps) {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [availableWidth]) // Solo quando availableWidth cambia
+  }, [availableWidth, maxLength]) // Includi maxLength nelle dipendenze
   
   // Calcola la larghezza disponibile in base allo schermo
   useEffect(() => {
@@ -39,6 +47,17 @@ export function Meter({ length, onLengthChange, maxLength }: MeterProps) {
         return
       }
       
+      const isMobile = window.innerWidth < 768
+      
+      // Su mobile, permettere al metro di estendersi fino a maxLength
+      // senza limitazioni basate sulla larghezza dello schermo
+      // Il metro può uscire parzialmente dallo schermo e l'utente può scrollare
+      if (isMobile) {
+        setAvailableWidth(maxLength)
+        return
+      }
+      
+      // Su desktop, calcola la larghezza disponibile con padding e margini
       // Usa il container se disponibile, altrimenti window.innerWidth
       let containerWidth = window.innerWidth
       
@@ -47,12 +66,10 @@ export function Meter({ length, onLengthChange, maxLength }: MeterProps) {
         containerWidth = rect.width
       }
       
-      // Considera il padding della pagina e del contenitore
-      const isMobile = window.innerWidth < 768
-      // Padding pagina: px-4 (16px) su mobile, px-8 (32px) su desktop
-      const pagePadding = isMobile ? 32 : 64
-      // Padding contenitore: p-6 (24px) su mobile, p-8 (32px) su desktop  
-      const containerPadding = isMobile ? 48 : 64
+      // Padding pagina: px-8 (32px) su desktop
+      const pagePadding = 64
+      // Padding contenitore: p-8 (32px) su desktop  
+      const containerPadding = 64
       
       // Larghezza disponibile = larghezza container - padding - margini di sicurezza
       // Margine di sicurezza di 80px per assicurarsi che il metro non esca mai dallo schermo
@@ -60,9 +77,7 @@ export function Meter({ length, onLengthChange, maxLength }: MeterProps) {
       const available = Math.max(0, containerWidth - pagePadding - containerPadding - 80)
       
       // Il maxLength effettivo è il minimo tra maxLength teorico e larghezza disponibile
-      // Assicuriamoci che sia almeno 150px per permettere il gioco (circa 4cm su schermi piccoli)
-      const minLength = 150
-      const effectiveMaxLength = Math.max(minLength, Math.min(maxLength, available))
+      const effectiveMaxLength = Math.min(maxLength, Math.max(available, 150))
       
       setAvailableWidth(effectiveMaxLength)
     }
@@ -233,11 +248,15 @@ export function Meter({ length, onLengthChange, maxLength }: MeterProps) {
 
   return (
     <div className="flex flex-col items-center gap-4 w-full">
-      {/* Container con overflow-hidden per prevenire che il metro esca dallo schermo */}
+      {/* Container: su mobile permette scroll orizzontale solo quando necessario (metro > schermo) */}
       <div 
         ref={containerRef}
-        className="w-full overflow-hidden flex justify-center"
-        style={{ maxWidth: '100%' }}
+        className="w-full overflow-x-auto overflow-y-hidden flex justify-start md:justify-center md:overflow-hidden"
+        style={{ 
+          maxWidth: '100%',
+          WebkitOverflowScrolling: 'touch',
+          scrollBehavior: 'smooth'
+        }}
       >
         <div
           ref={meterRef}
