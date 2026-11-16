@@ -9,11 +9,10 @@ import { useTheme } from '@/hooks/useTheme'
 
 export function HamburgerMenu() {
   const [isOpen, setIsOpen] = useState(false)
-  const [showThemeOptions, setShowThemeOptions] = useState(false)
   const [mounted, setMounted] = useState(false)
   const { user } = useAuth()
   const router = useRouter()
-  const { theme, toggleTheme, mounted: themeMounted, imageVersion } = useTheme()
+  const { theme, toggleTheme, mounted: themeMounted } = useTheme()
 
   // Assicurati che il componente sia montato (per SSR)
   useEffect(() => {
@@ -61,146 +60,80 @@ export function HamburgerMenu() {
     router.push('/result')
   }
 
+  const icona = (aperto: boolean) => (
+    <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path strokeLinecap="square" strokeWidth={2} d={aperto ? 'M6 18L18 6M6 6l12 12' : 'M4 7h16M4 12h16M4 17h16'} />
+    </svg>
+  )
+
   if (!mounted || !themeMounted) {
     return (
-      <button
-        className="p-2 md:p-3 rounded-xl-large hover:bg-primary-gray-light dark:hover:bg-primary-gray-medium transition-all focus:outline-none focus:ring-2 focus:ring-primary-yellow border-2 border-primary-gray-light dark:border-primary-gray-medium hover:border-primary-yellow dark:hover:border-primary-yellow-dark shadow-soft hover:shadow-soft-lg"
-        aria-label="Menu"
-        type="button"
-        disabled
-      >
-        <svg
-          className="w-6 h-6 md:w-7 md:h-7"
-          fill="none"
-          stroke="#1C1C1C"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-          style={{ color: '#1C1C1C' }}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
+      <button className="-mr-2 p-2" aria-label="Menu" type="button" disabled>
+        {icona(false)}
       </button>
     )
   }
+
+  const voce = 'block w-full border-b border-riga py-4 text-left text-lg font-semibold hover:pl-2 transition-[padding] duration-150'
 
   const menuContent = isOpen ? (
     <>
       {/* Overlay */}
       <div
-        className="fixed inset-0 bg-primary-gray-dark/50 dark:bg-black/70 backdrop-blur-sm z-[9998]"
+        className="dissolvi fixed inset-0 z-[9998] bg-pece/50"
         onClick={() => setIsOpen(false)}
       />
-      
+
       {/* Sidebar menu: renderizzato direttamente nel body tramite portal */}
       <aside
         data-menu-container
-        className="fixed top-0 bottom-0 right-0 w-full max-w-[100vw] md:w-[260px] md:max-w-[90vw] bg-primary-yellow dark:bg-primary-gray-dark shadow-soft-lg-lg z-[9999] transition-transform duration-300 overflow-hidden flex flex-col"
+        className="da-destra fixed bottom-0 right-0 top-0 z-[9999] flex w-full flex-col bg-foglio text-inchiostro sm:w-[320px] sm:border-l sm:border-riga"
         onClick={(e) => e.stopPropagation()}
       >
-            {/* Header: titolo + X */}
-            <div className="flex items-center justify-between p-4 border-b border-primary-gray-light dark:border-primary-gray-medium flex-shrink-0">
-              <h2 className="text-lg font-bold text-primary-gray-dark dark:text-primary-gray-light">Menu</h2>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="p-2 rounded-xl-large hover:bg-primary-gray-light dark:hover:bg-primary-gray-medium transition-colors"
-                aria-label="Chiudi menu"
-              >
-                <svg className="w-6 h-6 text-primary-gray-dark dark:text-primary-gray-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            {/* Menu vero e proprio: scrollabile, occupa tutto lo spazio rimanente */}
-            <div className="flex-1 overflow-y-auto p-4 pb-20" style={{ minHeight: 0 }}>
-              {/* Cambio tema */}
-              <div className="mb-4">
-                <button
-                  onClick={() => setShowThemeOptions(!showThemeOptions)}
-                  className="w-full flex items-center justify-between p-3 rounded-xl-large hover:bg-primary-gray-light dark:hover:bg-primary-gray-medium transition-colors group"
-                >
-                  <span className="font-semibold text-primary-gray-dark dark:text-primary-gray-light text-left">Tema</span>
-                  <svg
-                    className={`w-5 h-5 text-primary-gray-medium dark:text-primary-gray-light transition-transform ${showThemeOptions ? 'rotate-180' : ''}`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                {showThemeOptions && (
-                  <div className="mt-2 bg-primary-gray-light dark:bg-primary-gray-medium rounded-xl-large p-3 flex flex-col gap-2">
-                    <button
-                      onClick={() => {
-                        if (theme !== 'light') toggleTheme();
-                        setShowThemeOptions(false);
-                      }}
-                      className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors ${theme==='light'?'bg-primary-yellow/20 dark:bg-primary-yellow-dark/20 border-2 border-primary-yellow dark:border-primary-yellow-dark':'hover:bg-white/50 dark:hover:bg-primary-gray-dark/50'}`}
-                    >
-                      <span className="font-medium text-primary-gray-dark dark:text-primary-gray-light">Chiaro</span>
-                      {theme==='light' && <svg className="w-5 h-5 text-primary-yellow-dark" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>}
-                    </button>
-                    <button
-                      onClick={() => {
-                        if (theme !== 'dark') toggleTheme();
-                        setShowThemeOptions(false);
-                      }}
-                      className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors ${theme==='dark'?'bg-primary-yellow/20 dark:bg-primary-yellow-dark/20 border-2 border-primary-yellow dark:border-primary-yellow-dark':'hover:bg-white/50 dark:hover:bg-primary-gray-dark/50'}`}
-                    >
-                      <span className="font-medium text-primary-gray-dark dark:text-primary-gray-light">Scuro</span>
-                      {theme==='dark' && <svg className="w-5 h-5 text-primary-yellow-dark dark:text-primary-yellow" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>}
-                    </button>
-                  </div>
-                )}
-              </div>
-              {/* Classifica */}
-              {user && (
-                <div className="mb-3">
-                  <button
-                    onClick={handleLeaderboard}
-                    className="w-full flex items-center p-3 rounded-xl-large hover:bg-primary-gray-light dark:hover:bg-primary-gray-medium transition-colors group"
-                  >
-                    <span className="font-semibold text-primary-gray-dark dark:text-primary-gray-light text-left">Classifica</span>
-                  </button>
-                </div>
-              )}
-              
-              {/* Resoconto */}
-              {user && (
-                <div className="mb-3">
-                  <button
-                    onClick={handleResult}
-                    className="w-full flex items-center p-3 rounded-xl-large hover:bg-primary-gray-light dark:hover:bg-primary-gray-medium transition-colors group"
-                  >
-                    <span className="font-semibold text-primary-gray-dark dark:text-primary-gray-light text-left">Resoconto</span>
-                  </button>
-                </div>
-              )}
+        <div className="flex h-14 flex-shrink-0 items-center justify-between border-b border-riga px-5">
+          <h2 className="font-bold">Menu</h2>
+          <button onClick={() => setIsOpen(false)} className="-mr-2 p-2" aria-label="Chiudi menu">
+            {icona(true)}
+          </button>
+        </div>
 
-              {/* Profilo */}
-              {user && (
-                <div className="mb-3">
-                  <button
-                    onClick={handleProfile}
-                    className="w-full flex items-center p-3 rounded-xl-large hover:bg-primary-gray-light dark:hover:bg-primary-gray-medium transition-colors group"
-                  >
-                    <span className="font-semibold text-primary-gray-dark dark:text-primary-gray-light text-left">Profilo</span>
-                  </button>
-                </div>
-              )}
-            </div>
-            {/* Footer con Logout in basso a sinistra */}
-            {user && (
-              <div className="flex-shrink-0 p-4 border-t border-primary-gray-light dark:border-primary-gray-medium">
+        <div className="flex-1 overflow-y-auto px-5" style={{ minHeight: 0 }}>
+          {user && (
+            <>
+              <button onClick={handleLeaderboard} className={voce}>Classifica</button>
+              <button onClick={handleResult} className={voce}>Resoconto</button>
+              <button onClick={handleProfile} className={voce}>Profilo</button>
+            </>
+          )}
+
+          {/* Cambio tema */}
+          <div className="py-5">
+            <p className="mb-2 text-sm text-grafite">Tema</p>
+            <div className="grid grid-cols-2 gap-2">
+              {(['light', 'dark'] as const).map((opzione) => (
                 <button
-                  onClick={handleLogout}
-                  className="font-semibold text-red-600 dark:text-red-400 hover:opacity-80 transition-opacity"
+                  key={opzione}
+                  onClick={() => {
+                    if (theme !== opzione) toggleTheme()
+                  }}
+                  aria-pressed={theme === opzione}
+                  className={`btn px-4 py-2.5 text-sm ${theme === opzione ? 'btn-inchiostro' : 'btn-linea'}`}
                 >
-                  Logout
+                  {opzione === 'light' ? 'Chiaro' : 'Scuro'}
                 </button>
-              </div>
-            )}
-        </aside>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {user && (
+          <div className="flex-shrink-0 border-t border-riga px-5 py-4">
+            <button onClick={handleLogout} className="font-semibold text-errore hover:underline">
+              Esci
+            </button>
+          </div>
+        )}
+      </aside>
     </>
   ) : null
 
@@ -212,34 +145,12 @@ export function HamburgerMenu() {
           e.stopPropagation()
           setIsOpen(!isOpen)
         }}
-        className="p-2 md:p-3 rounded-xl-large hover:bg-primary-gray-light dark:hover:bg-primary-gray-medium transition-all focus:outline-none focus:ring-2 focus:ring-primary-yellow border-2 border-primary-gray-light dark:border-primary-gray-medium hover:border-primary-yellow dark:hover:border-primary-yellow-dark shadow-soft hover:shadow-soft-lg"
+        className="-mr-2 p-2"
         aria-label="Menu"
         type="button"
         aria-expanded={isOpen}
       >
-        {isOpen ? (
-          <svg
-            className="w-6 h-6 md:w-7 md:h-7 transition-transform duration-300"
-            fill="none"
-            stroke="#1C1C1C"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-            style={{ color: '#1C1C1C' }}
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        ) : (
-          <svg
-            className="w-6 h-6 md:w-7 md:h-7 transition-transform duration-300"
-            fill="none"
-            stroke="#1C1C1C"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-            style={{ color: '#1C1C1C' }}
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        )}
+        {icona(isOpen)}
       </button>
 
       {/* Renderizza il menu direttamente nel body usando Portal */}
@@ -247,4 +158,3 @@ export function HamburgerMenu() {
     </>
   )
 }
-

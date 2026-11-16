@@ -2,245 +2,245 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
-  height: 100%;
+:root {
+  --carta: 236 238 234;
+  --foglio: 247 248 245;
+  --inchiostro: 27 29 31;
+  --grafite: 91 97 103;
+  --riga: 201 205 200;
+  --nastro: 255 210 31;
+  --errore: 217 40 30;
+  --acciaio: 141 148 155;
+  /* Scuro fisso: testo e tacche sul giallo del nastro, in entrambi i temi */
+  --pece: 27 29 31;
 }
 
-body {
-  @apply bg-primary-gray-light;
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
-
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url('/assets/background-construction.svg');
-  background-repeat: repeat;
-  background-size: 800px 600px;
-  background-position: 0 0;
-  opacity: 0.08;
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Dark mode background */
-.dark body::before {
-  opacity: 0.05;
-}
-
-#__next {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  z-index: 1;
-}
-
-/* Animazione coriandoli */
-@keyframes confetti-fall {
-  0% {
-    transform: translateY(0) rotate(0deg);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(100vh) rotate(720deg);
-    opacity: 0;
-  }
-}
-
-.confetti {
-  animation: confetti-fall 3s ease-in forwards;
-}
-
-/* Animazione pulsante */
-@keyframes pulse-glow {
-  0%, 100% {
-    transform: scale(1);
-    box-shadow: 0 0 20px rgba(244, 208, 63, 0.5);
-  }
-  50% {
-    transform: scale(1.05);
-    box-shadow: 0 0 30px rgba(244, 208, 63, 0.8);
-  }
-}
-
-.pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
-}
-
-/* Animazione pulsante per il logo del miglior punteggio */
-@keyframes pulse-scale {
-  0%, 100% {
-    transform: scale(1.5);
-  }
-  50% {
-    transform: scale(1.7);
-  }
-}
-
-.pulse-scale {
-  animation: pulse-scale 2s ease-in-out infinite;
-}
-
-/* Smooth transitions */
-* {
-  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-}
-
-/* Fix per caratteri con discendenti (g, j, p, q, y) nel titolo principale */
-h1.bg-clip-text {
-  padding-bottom: 0.35rem !important;
-  overflow: visible !important;
-  line-height: 1.25 !important;
-  display: inline-block;
-  width: 100%;
-}
-
-@media (min-width: 768px) {
-  h1.bg-clip-text {
-    padding-bottom: 0.45rem !important;
-    line-height: 1.3 !important;
-  }
-}
-
-@media (min-width: 1024px) {
-  h1.bg-clip-text {
-    padding-bottom: 0.5rem !important;
-    line-height: 1.35 !important;
-  }
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: #F4F6F7;
-}
-
-.dark ::-webkit-scrollbar-track {
-  background: #1C1C1C;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #D4AC0D;
-  border-radius: 5px;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: #D4AC0D;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #F4D03F;
-}
-
-/* Dark mode support */
 .dark {
   color-scheme: dark;
+  --carta: 23 25 27;
+  --foglio: 32 35 38;
+  --inchiostro: 236 238 234;
+  --grafite: 163 169 174;
+  --riga: 52 56 60;
+  --errore: 255 90 79;
 }
 
-.dark body {
-  @apply bg-primary-gray-dark;
-  color: #F4F6F7;
+@layer base {
+  html {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-carta text-inchiostro font-sans antialiased;
+    min-height: 100%;
+  }
+
+  :focus-visible {
+    outline: 2px solid rgb(var(--inchiostro));
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: rgb(var(--nastro));
+    color: rgb(var(--pece));
+  }
 }
 
-/* Miglioramenti contrasto tema scuro */
-.dark .text-primary-gray-medium {
-  color: #E0E0E0;
+@layer components {
+  /* Numeri e titoli: Archivo stretto e pesante, come le cifre stampate su un metro */
+  .cifre {
+    font-stretch: 68%;
+    font-weight: 800;
+    line-height: 0.92;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center rounded-lg px-6 py-3.5 text-base font-bold;
+    transition: transform 120ms ease-out, background-color 120ms ease-out, opacity 120ms ease-out;
+  }
+
+  .btn:active {
+    transform: scale(0.97);
+  }
+
+  .btn:disabled {
+    @apply cursor-not-allowed opacity-50;
+    transform: none;
+  }
+
+  .btn-nastro {
+    @apply bg-nastro text-pece;
+  }
+
+  .btn-nastro:hover {
+    background-color: #f2c300;
+  }
+
+  .btn-inchiostro {
+    @apply bg-inchiostro text-carta;
+  }
+
+  .btn-inchiostro:hover {
+    @apply opacity-90;
+  }
+
+  .btn-linea {
+    @apply border border-inchiostro text-inchiostro;
+  }
+
+  .btn-linea:hover {
+    @apply bg-inchiostro text-carta;
+  }
+
+  .collegamento {
+    @apply font-semibold underline decoration-nastro decoration-2 underline-offset-4;
+  }
+
+  .collegamento:hover {
+    @apply decoration-inchiostro;
+  }
+
+  .etichetta {
+    @apply mb-2 block text-sm font-semibold;
+  }
+
+  .campo {
+    @apply w-full rounded-lg border border-riga bg-foglio px-4 py-3 text-inchiostro;
+    transition: border-color 120ms ease-out;
+  }
+
+  .campo::placeholder {
+    @apply text-grafite/70;
+  }
+
+  .campo:focus {
+    @apply border-inchiostro;
+    outline: 2px solid rgb(var(--nastro));
+    outline-offset: 0;
+  }
+
+  .avviso-errore {
+    @apply rounded-lg border border-errore px-4 py-3 text-sm text-errore;
+  }
+
+  .avviso-ok {
+    @apply rounded-lg border border-inchiostro px-4 py-3 text-sm;
+  }
+
+  .caricamento {
+    @apply h-1 w-24 overflow-hidden rounded-full bg-riga;
+  }
+
+  .caricamento::after {
+    content: '';
+    @apply block h-full w-1/3 rounded-full bg-nastro;
+  }
 }
 
-.dark .text-primary-gray-dark {
-  color: #F4F6F7;
-}
+/* Tutto il movimento vive qui dentro: con "riduci movimento" non parte nulla */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes entra {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
 
-.dark input,
-.dark textarea,
-.dark select {
-  background-color: #2E2E2E;
-  color: #F4F6F7;
-}
+  @keyframes srotola {
+    from {
+      transform: scaleX(0);
+    }
+  }
 
-.dark input::placeholder,
-.dark textarea::placeholder {
-  color: #A0A0A0;
-}
+  @keyframes da-sinistra {
+    from {
+      transform: translateX(-100%);
+    }
+  }
 
-/* Rimuovi sfondi bianchi dai tag object in dark mode */
-.dark object {
-  background: transparent !important;
-  background-color: transparent !important;
-  background-image: none !important;
-}
+  @keyframes da-destra {
+    from {
+      transform: translateX(100%);
+    }
+  }
 
-/* Forza trasparenza su tutti i tag object */
-object {
-  background: transparent !important;
-  background-color: transparent !important;
-}
+  @keyframes dissolvi {
+    from {
+      opacity: 0;
+    }
+  }
 
-/* Rimuovi eventuali sfondi dai container che contengono direttamente loghi */
-.dark [class*="flex"][class*="items-center"][class*="justify-center"]:has(object),
-.dark [class*="inline-flex"][class*="items-center"][class*="justify-center"]:has(object),
-[class*="flex"][class*="items-center"][class*="justify-center"]:has(object),
-[class*="inline-flex"][class*="items-center"][class*="justify-center"]:has(object) {
-  background: transparent !important;
-  background-color: transparent !important;
-}
+  @keyframes assesta {
+    0% {
+      transform: translateX(0);
+    }
+    35% {
+      transform: translateX(3px);
+    }
+    70% {
+      transform: translateX(-1px);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
 
-/* Rimuovi sfondi bianchi dai container con classi specifiche che contengono loghi */
-.dark .w-16.h-16,
-.dark .w-12.h-12,
-.dark .w-10.h-10,
-.dark .w-24.h-24,
-.dark .w-32.h-32 {
-  background: transparent !important;
-  background-color: transparent !important;
-}
+  @keyframes scorri {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(300%);
+    }
+  }
 
-/* Rimuovi sfondi bianchi dai container che potrebbero avere bg-white o bg-gradient */
-.dark div[class*="bg-white"][class*="rounded"]:has(object),
-.dark div[class*="bg-gradient"][class*="rounded"]:has(object),
-div[class*="bg-white"][class*="rounded"]:has(object),
-div[class*="bg-gradient"][class*="rounded"]:has(object) {
-  background: transparent !important;
-  background-color: transparent !important;
-}
+  /* Una schermata che entra: una volta, tutta insieme */
+  .entra {
+    animation: entra 420ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
 
-/* Stile specifico per rimuovere sfondi dai tag object e dai loro iframe interni */
-object::before,
-object::after {
-  display: none !important;
-  background: transparent !important;
-  background-color: transparent !important;
-}
+  /* Righe di una lista in sequenza: --i è l'indice della riga */
+  .riga-entra {
+    animation: entra 380ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: calc(var(--i, 0) * 45ms);
+  }
 
-/* Forza trasparenza anche all'interno degli iframe generati dai tag object */
-.dark object,
-object {
-  mix-blend-mode: normal !important;
-}
+  /* Una barra che si estende da sinistra, come un nastro tirato fuori */
+  .srotola {
+    transform-origin: left center;
+    animation: srotola 700ms cubic-bezier(0.2, 0.9, 0.25, 1) both;
+    animation-delay: var(--ritardo, 0ms);
+  }
 
-/* Rimuovi eventuali ombre o bordi bianchi */
-.dark object,
-object {
-  box-shadow: none !important;
-  border: none !important;
-  outline: none !important;
-}
+  .da-sinistra {
+    animation: da-sinistra 520ms cubic-bezier(0.2, 0.9, 0.25, 1) both;
+  }
 
-/* Rimuovi sfondo bianco dai contenitori con dimensioni specifiche che contengono object */
-.dark [class*="w-"][class*="h-"]:has(object) {
-  background: transparent !important;
-  background-color: transparent !important;
+  .da-destra {
+    animation: da-destra 280ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
+  .dissolvi {
+    animation: dissolvi 240ms ease-out both;
+    animation-delay: var(--ritardo, 0ms);
+  }
+
+  /* Il nastro del metro: quando non lo si trascina rientra a scatto con un piccolo rimbalzo */
+  .metro-nastro {
+    transition: width 480ms cubic-bezier(0.34, 1.4, 0.5, 1);
+  }
+
+  .metro-nastro[data-trascina='true'] {
+    transition: none;
+  }
+
+  .metro-gancio[data-trascina='false'] {
+    animation: assesta 260ms ease-out;
+  }
+
+  .caricamento::after {
+    animation: scorri 900ms ease-in-out infinite;
+  }
 }

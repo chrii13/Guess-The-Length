@@ -1,11 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Navbar } from '@/components/Navbar'
 import { supabase } from '@/lib/supabase'
-import { useTheme } from '@/hooks/useTheme'
 import { checkUsernameExists } from '@/lib/profile'
 import { validateUsername, validateEmail, validatePassword, sanitizeUsername, sanitizeEmail } from '@/lib/validation'
 
@@ -17,17 +16,7 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
   const [attempts, setAttempts] = useState(0)
   const [lastAttempt, setLastAttempt] = useState(0)
-  const [buttonTextColor, setButtonTextColor] = useState('#1C1C1C')
-  const [titleTextColor, setTitleTextColor] = useState('#1C1C1C')
   const router = useRouter()
-  const { theme, mounted: themeMounted } = useTheme()
-
-  useEffect(() => {
-    if (themeMounted) {
-      setButtonTextColor('#1C1C1C')
-      setTitleTextColor(theme === 'dark' ? '#FFFFFF' : '#1C1C1C')
-    }
-  }, [theme, themeMounted])
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -432,95 +421,83 @@ export default function RegisterPage() {
   return (
     <>
       <Navbar />
-      <main className="max-w-md mx-auto px-4 py-8 md:py-16 relative z-10">
-        <div className="bg-white dark:bg-primary-gray-medium backdrop-blur-sm rounded-2xl-large shadow-soft-lg p-6 md:p-10" style={{ border: '2px solid #1C1C1C' }}>
-          <div className="text-center mb-6 md:mb-8">
-            <h1 className="text-2xl md:text-3xl font-bold mb-2" style={{ color: titleTextColor }}>Registrati</h1>
-            <p className="text-sm md:text-base text-primary-gray-medium dark:text-primary-gray-light">Crea il tuo account Guess the Length</p>
+      <main className="entra mx-auto max-w-md px-5 pb-16 pt-10 md:pt-16">
+        <h1 className="cifre text-6xl">Registrati</h1>
+        <p className="mt-3 text-grafite">Crea il tuo account per salvare i punteggi.</p>
+
+        <form onSubmit={handleRegister} className="mt-8 space-y-5">
+          <div>
+            <label htmlFor="username" className="etichetta">
+              Username
+            </label>
+            <input
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              minLength={5}
+              className="campo"
+              placeholder="Il tuo username"
+            />
+            <p className="mt-1 text-xs text-grafite">Obbligatorio, minimo 5 caratteri</p>
           </div>
-          
-          <form onSubmit={handleRegister} className="space-y-5">
-            <div>
-              <label htmlFor="username" className="block text-sm font-semibold text-primary-gray-dark dark:text-primary-gray-light mb-2">
-                Username <span className="text-red-500">*</span>
-              </label>
-              <input
-                id="username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-                minLength={5}
-                className="w-full px-4 py-3 border-2 border-primary-gray-light dark:border-primary-gray-medium rounded-xl-large focus:ring-2 focus:ring-primary-yellow focus:border-primary-yellow transition-all bg-white dark:bg-primary-gray-dark text-primary-gray-dark dark:text-primary-gray-light placeholder:text-primary-gray-medium/50 dark:placeholder:text-primary-gray-light/50"
-                placeholder="Il tuo username"
-              />
-              <p className="mt-1 text-xs text-primary-gray-medium dark:text-primary-gray-light">Minimo 5 caratteri (obbligatorio)</p>
+
+          <div>
+            <label htmlFor="email" className="etichetta">
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="campo"
+              placeholder="tua@email.com"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="password" className="etichetta">
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={8}
+              className="campo"
+              placeholder="••••••••"
+            />
+            <p className="mt-1 text-xs text-grafite">Minimo 8 caratteri</p>
+          </div>
+
+          {error && (
+            <div className="avviso-errore" role="alert">
+              <p>{error}</p>
+              {(error.includes('già registrata') || error.includes('già in uso')) && (
+                <Link href="/login" className="mt-2 inline-block font-semibold underline">
+                  Vai alla pagina di accesso
+                </Link>
+              )}
             </div>
+          )}
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-primary-gray-dark dark:text-primary-gray-light mb-2">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-4 py-3 border-2 border-primary-gray-light dark:border-primary-gray-medium rounded-xl-large focus:ring-2 focus:ring-primary-yellow focus:border-primary-yellow transition-all bg-white dark:bg-primary-gray-dark text-primary-gray-dark dark:text-primary-gray-light placeholder:text-primary-gray-medium/50 dark:placeholder:text-primary-gray-light/50"
-                placeholder="tua@email.com"
-              />
-            </div>
+          <button type="submit" disabled={loading} className="btn btn-nastro w-full">
+            {loading ? 'Registrazione in corso...' : 'Registrati'}
+          </button>
+        </form>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-semibold text-primary-gray-dark dark:text-primary-gray-light mb-2">
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={8}
-                className="w-full px-4 py-3 border-2 border-primary-gray-light dark:border-primary-gray-medium rounded-xl-large focus:ring-2 focus:ring-primary-yellow focus:border-primary-yellow transition-all bg-white dark:bg-primary-gray-dark text-primary-gray-dark dark:text-primary-gray-light placeholder:text-primary-gray-medium/50 dark:placeholder:text-primary-gray-light/50"
-                placeholder="••••••••"
-              />
-              <p className="mt-1 text-xs text-primary-gray-medium dark:text-primary-gray-light">Minimo 8 caratteri</p>
-            </div>
-
-            {error && (
-              <div className="bg-red-50 dark:bg-red-900/20 border-2 border-red-300 dark:border-red-700 text-red-700 dark:text-red-400 px-4 py-3 rounded-xl-large text-sm">
-                <div className="flex flex-col gap-2">
-                  <div>{error}</div>
-                  {(error.includes('già registrata') || error.includes('già in uso')) && (
-                    <Link href="/login" className="text-red-800 dark:text-red-300 hover:underline font-semibold text-sm">
-                      → Vai alla pagina di accesso
-                    </Link>
-                  )}
-                </div>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full px-6 py-4 text-base md:text-lg font-bold bg-gradient-to-r from-primary-yellow to-primary-yellow-dark rounded-xl-large hover:shadow-yellow-glow disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-soft-lg transform hover:scale-[1.02] active:scale-[0.98]"
-              style={{ color: buttonTextColor }}
-            >
-              {loading ? 'Registrazione in corso...' : 'Registrati'}
-            </button>
-          </form>
-
-          <p className="mt-6 text-center text-sm md:text-base text-primary-gray-medium dark:text-primary-gray-light">
-            Hai già un account?{' '}
-            <Link href="/login" className="text-primary-gray-dark dark:text-primary-yellow hover:opacity-80 dark:hover:text-primary-yellow-dark font-bold transition-colors">
-              Accedi
-            </Link>
-          </p>
-        </div>
+        <p className="mt-6 text-grafite">
+          Hai già un account?{' '}
+          <Link href="/login" className="collegamento text-inchiostro">
+            Accedi
+          </Link>
+        </p>
       </main>
     </>
   )
 }
-

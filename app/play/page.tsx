@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
+import Link from 'next/link'
 import { Navbar } from '@/components/Navbar'
 import { Meter } from '@/components/Meter'
 import { CmReferenceBox } from '@/components/CmReferenceBox'
@@ -11,8 +11,8 @@ import { generateRandomLength, calculateError, pixelsToCm, formatLength, cmToPix
 import { calibrate } from '@/lib/calibration'
 import { saveGameSession, getUserBestScore, type RoundData } from '@/lib/scores'
 import { NewBestScore } from '@/components/NewBestScore'
-import { SvgIcon } from '@/components/SvgIcon'
-import { useTheme } from '@/hooks/useTheme'
+import { Confronto } from '@/components/Confronto'
+import { Cifra } from '@/components/Cifra'
 
 interface Round {
   target: number
@@ -23,7 +23,6 @@ interface Round {
 export default function PlayPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
-  const { theme, mounted: themeMounted, imageVersion } = useTheme()
   const [rounds, setRounds] = useState<Round[]>([])
   const [currentRound, setCurrentRound] = useState(0)
   const [currentAttempt, setCurrentAttempt] = useState(0)
@@ -169,12 +168,14 @@ export default function PlayPage() {
     setShowNewBestScore(false)
   }
 
+  const pagina = 'mx-auto max-w-3xl px-5 pb-16 pt-8 md:pt-14'
+
   if (loading) {
     return (
       <>
         <Navbar />
-        <main className="max-w-4xl mx-auto px-4 py-8 md:py-16 text-center">
-          <p className="text-lg md:text-xl text-primary-gray-medium dark:text-primary-gray-light">Caricamento...</p>
+        <main className={pagina}>
+          <div className="caricamento" role="status" aria-label="Caricamento" />
         </main>
       </>
     )
@@ -188,33 +189,16 @@ export default function PlayPage() {
     return (
       <>
         <Navbar />
-        <main className="max-w-4xl mx-auto px-4 py-8 md:py-16 text-center relative z-10">
-          <div className="inline-flex items-center justify-center w-[175px] h-[175px] md:w-[200px] md:h-[200px] flex mb-2 bg-transparent dark:bg-transparent">
-            <Image
-              key={`play-${theme}-${imageVersion}`}
-              src={`${themeMounted && theme === 'dark' ? "/assets/icons/play-dark.svg" : "/assets/icons/play.svg"}?v=${theme}-${imageVersion}`}
-              alt="Play Icon"
-              width={200}
-              height={200}
-              className="w-full h-full pointer-events-none object-contain pulse-scale"
-              style={{ backgroundColor: 'transparent', background: 'transparent', display: 'block', objectPosition: 'center', transformOrigin: 'center' }}
-              unoptimized
-            />
-          </div>
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary-gray-dark dark:text-primary-gray-light mb-4 md:mb-6 bg-gradient-to-r from-primary-gray-dark via-primary-gray-medium to-primary-gray-dark dark:from-primary-gray-light dark:via-primary-yellow dark:to-primary-gray-light bg-clip-text text-transparent">
-            Inizia a Giocare
+        <main className={`${pagina} entra`}>
+          <h1 className="cifre text-[clamp(3.2rem,13vw,7rem)]">
+            Tre lunghezze, due tentativi.
           </h1>
-          <p className="text-base md:text-lg text-primary-gray-medium dark:text-primary-gray-light mb-6 md:mb-8 max-w-2xl mx-auto">
-            Allunga il metro per indovinare la lunghezza esatta. 
-            <br />
-            <span className="font-bold text-primary-gray-dark dark:text-primary-gray-light">Andarci vicino conta solo a bocce...o quasi!</span>
+          <p className="mt-8 max-w-[44ch] text-lg leading-relaxed">
+            Allunga il metro fino alla lunghezza richiesta, a occhio.{' '}
+            <span className="font-semibold">Andarci vicino conta solo a bocce... o quasi.</span>
           </p>
-          <button
-            onClick={startGame}
-            className="px-8 md:px-12 py-4 md:py-5 text-base md:text-lg font-bold bg-gradient-to-r from-primary-yellow to-primary-yellow-dark rounded-2xl-large hover:shadow-yellow-glow transition-all shadow-soft-lg transform hover:scale-105 active:scale-95"
-            style={{ color: '#1C1C1C' }}
-          >
-             Inizia Partita 
+          <button onClick={startGame} className="btn btn-nastro mt-8 w-full sm:w-auto sm:px-14">
+            Inizia partita
           </button>
         </main>
       </>
@@ -222,8 +206,9 @@ export default function PlayPage() {
   }
 
   if (gameFinished) {
-    const isNewRecord = bestScore !== null && totalScore < bestScore
-    const isFirstGame = bestScore === null
+    // Il confronto va fatto con il record precedente: bestScore dopo il salvataggio include già questa partita
+    const isNewRecord = previousBest !== null && totalScore < previousBest
+    const isFirstGame = gameSaved && previousBest === null
 
     return (
       <>
@@ -235,66 +220,50 @@ export default function PlayPage() {
             onContinue={handleContinueFromBestScore}
           />
         )}
-        <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16 text-center relative z-10">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary-gray-dark dark:text-primary-gray-light mb-6 md:mb-8 bg-gradient-to-r from-primary-gray-dark via-primary-gray-medium to-primary-gray-dark dark:from-primary-gray-light dark:via-primary-yellow dark:to-primary-gray-light bg-clip-text text-transparent">
-            Partita Terminata!
-          </h1>
-          
-          <div className="bg-white/90 dark:bg-primary-gray-medium backdrop-blur-sm rounded-2xl-large shadow-soft-lg p-6 md:p-8 mb-6 md:mb-8 border border-primary-gray-light dark:border-primary-gray-medium">
-            {/* Punteggio totale */}
-            <div className="mb-6">
-              <p className="text-base md:text-lg text-primary-gray-medium dark:text-primary-gray-light mb-2 font-medium">Punteggio di questa partita</p>
-              <p className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-gray-dark dark:text-primary-gray-light">{formatLength(totalScore)} cm</p>
-            </div>
+        <main className={`${pagina} entra`}>
+          <h1 className="text-lg font-bold">Partita terminata</h1>
 
-            {/* Miglior punteggio */}
-            {bestScore !== null && (
-              <div className="mb-6 pt-6 border-t border-primary-gray-light dark:border-primary-gray-medium">
-                <p className="text-base md:text-lg text-primary-gray-medium dark:text-primary-gray-light mb-2 font-medium">Il tuo miglior punteggio</p>
-                <p className="text-3xl md:text-4xl font-bold text-primary-yellow-dark dark:text-primary-yellow">{formatLength(bestScore)} cm</p>
-              </div>
-            )}
+          <p className="mt-8 text-grafite">In tre round hai sbagliato in tutto di</p>
+          <p className="cifre mt-2 text-[clamp(5rem,24vw,12rem)]">
+            <Cifra valore={totalScore} durata={1000} />
+            <span className="text-[0.32em]"> cm</span>
+          </p>
 
-            {/* Messaggio nuovo record */}
-            {isNewRecord && bestScore !== null && !showNewBestScore && (
-              <div className="bg-primary-yellow/20 border-2 border-primary-yellow rounded-xl-large p-4 mb-4">
-                <p className="text-lg md:text-xl font-bold text-primary-yellow-dark">Nuovo Record Personale!</p>
-              </div>
-            )}
+          {bestScore !== null && (
+            <p className="mt-6 text-lg">
+              Il tuo miglior punteggio: <span className="font-bold">{formatLength(bestScore)} cm</span>
+            </p>
+          )}
 
-            {/* Messaggio primo punteggio */}
-            {isFirstGame && (
-              <div className="bg-primary-blue/20 border-2 border-primary-blue rounded-xl-large p-4 mb-4">
-                <p className="text-lg md:text-xl font-bold text-primary-blue">Primo punteggio salvato!</p>
-              </div>
-            )}
+          {isNewRecord && !showNewBestScore && (
+            <p className="mt-4 inline-block bg-nastro px-3 py-1.5 font-bold text-pece">Nuovo record personale</p>
+          )}
 
-            {/* Dettagli dei round */}
-            <div className="mt-6 pt-6 border-t border-primary-gray-light dark:border-primary-gray-medium">
-              <p className="text-sm md:text-base font-bold text-primary-gray-dark dark:text-primary-gray-light mb-3">Dettagli dei Round:</p>
-              <div className="space-y-2 text-left max-w-md mx-auto">
-                {rounds.map((round, idx) => (
-                  <div key={idx} className="flex justify-between p-3 md:p-4 bg-primary-gray-light dark:bg-primary-gray-dark rounded-xl-large border border-primary-gray-light dark:border-primary-gray-medium">
-                    <span className="font-semibold text-primary-gray-dark dark:text-primary-gray-light">Round {idx + 1}:</span>
-                    <div className="text-right">
-                      <span className="text-xs md:text-sm text-primary-gray-medium dark:text-primary-gray-light block">Target: {formatLength(round.target)} cm</span>
-                      <span className="text-xs md:text-sm font-bold text-primary-yellow-dark dark:text-primary-yellow">Errore: {formatLength(round.bestError)} cm</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+          {isFirstGame && (
+            <p className="mt-4 inline-block bg-nastro px-3 py-1.5 font-bold text-pece">Primo punteggio salvato</p>
+          )}
 
-            {/* Loading state */}
-            {saving && (
-              <div className="mt-4 text-sm md:text-base text-primary-gray-medium dark:text-primary-gray-light font-medium">
-                Salvataggio in corso...
-              </div>
-            )}
-          </div>
+          {saving && (
+            <p className="mt-4 text-sm text-grafite">Salvataggio in corso...</p>
+          )}
 
-          {/* Pulsanti azione */}
-          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
+          <ul className="mt-10 border-t border-riga">
+            {rounds.map((round, idx) => (
+              <li
+                key={idx}
+                className="riga-entra flex items-baseline justify-between gap-4 border-b border-riga py-3.5"
+                style={{ ['--i' as string]: idx + 4 }}
+              >
+                <span className="font-semibold">Round {idx + 1}</span>
+                <span className="text-right text-sm text-grafite">
+                  Da indovinare {formatLength(round.target)} cm,{' '}
+                  <span className="font-bold text-errore">scarto {formatLength(round.bestError)} cm</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
             <button
               onClick={() => {
                 setGameFinished(false)
@@ -305,47 +274,19 @@ export default function PlayPage() {
                 setShowNewBestScore(false)
                 startGame()
               }}
-              className="px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-bold bg-gradient-to-r from-primary-yellow to-primary-yellow-dark rounded-xl-large hover:shadow-yellow-glow transition-all shadow-soft-lg transform hover:scale-105 active:scale-95"
-              style={{ color: '#1C1C1C' }}
+              className="btn btn-nastro sm:px-10"
             >
               Rigioca
             </button>
-            <button
-              onClick={() => router.push('/result')}
-              className="px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-bold text-primary-gray-dark dark:text-primary-gray-light bg-white dark:bg-primary-gray-medium border-2 border-primary-yellow dark:border-primary-yellow-dark rounded-xl-large hover:bg-primary-yellow/10 dark:hover:bg-primary-yellow-dark/20 transition-all shadow-soft-lg transform hover:scale-105 active:scale-95"
-            >
-              Vedi Resoconto
+            <button onClick={() => router.push('/result')} className="btn btn-linea">
+              Vedi resoconto
             </button>
-            <button
-              onClick={() => router.push('/leaderboard')}
-              className="px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-bold text-primary-gray-dark dark:text-primary-gray-light bg-white dark:bg-primary-gray-medium border-2 border-primary-yellow dark:border-primary-yellow-dark rounded-xl-large hover:bg-primary-yellow/10 dark:hover:bg-primary-yellow-dark/20 transition-all shadow-soft-lg transform hover:scale-105 active:scale-95"
-            >
+            <button onClick={() => router.push('/leaderboard')} className="btn btn-linea">
               Classifica
             </button>
-            <div 
-              onClick={() => router.push('/')}
-              className="bg-primary-yellow border-2 border-primary-yellow rounded-xl-large shadow-soft-lg p-2 md:p-3 flex items-center justify-center hover:bg-primary-yellow-dark transition-all transform hover:scale-105 active:scale-95 cursor-pointer overflow-hidden"
-              role="button"
-              tabIndex={0}
-              aria-label="Home"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault()
-                  router.push('/')
-                }
-              }}
-            >
-              <Image
-                key={`home-${theme}-${imageVersion}`}
-                src={`${themeMounted && theme === 'dark' ? "/assets/icons/home-dark.svg" : "/assets/icons/home.svg"}?v=${theme}-${imageVersion}`}
-                alt="Home"
-                width={64}
-                height={64}
-                className="w-14 h-14 md:w-16 md:h-16 pointer-events-none"
-                style={{ backgroundColor: 'transparent', background: 'transparent', display: 'block', transform: 'scale(2.5)', transformOrigin: 'center', margin: '0 auto', marginTop: '8px' }}
-                unoptimized
-              />
-            </div>
+            <Link href="/" className="collegamento self-center sm:ml-3">
+              Home
+            </Link>
           </div>
         </main>
       </>
@@ -358,67 +299,50 @@ export default function PlayPage() {
 
   // Schermata risultato round
   if (showRoundResult && roundComplete) {
+    const bestAttempt = attempts.find((attempt) => calculateError(attempt, currentTarget) === currentBestError) ?? attempts[0]
+
     return (
       <>
         <Navbar />
-        <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16 relative z-10">
-          <div className="bg-white/90 dark:bg-primary-gray-medium backdrop-blur-sm rounded-2xl-large shadow-soft-lg p-6 md:p-8 border border-primary-gray-light dark:border-primary-gray-medium">
-            <div className="text-center mb-6 md:mb-8">
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary-gray-dark dark:text-primary-gray-light mb-4">
-                Round {currentRound + 1} di 3 - Completato!
-              </h1>
-              
-              <div className="bg-primary-yellow/10 dark:bg-primary-yellow-dark/10 rounded-xl-large p-5 md:p-6 mb-6 border-2 border-primary-yellow/30 dark:border-primary-yellow-dark/30">
-                <p className="text-xs md:text-sm text-primary-gray-medium dark:text-primary-gray-light mb-2 font-medium">Lunghezza da indovinare</p>
-                <p className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary-gray-dark dark:text-primary-gray-light mb-4">
-                  {formatLength(currentTarget)} cm
-                </p>
-                
-                <div className="mt-4 pt-4 border-t border-primary-yellow/30 dark:border-primary-yellow-dark/30">
-                  <p className="text-xs md:text-sm text-primary-gray-medium dark:text-primary-gray-light mb-2 font-medium">Risultato migliore</p>
-                  <p className="text-3xl md:text-4xl font-bold text-primary-yellow-dark dark:text-primary-yellow">
-                    Errore: {formatLength(currentBestError)} cm
-                  </p>
-                </div>
-              </div>
-
-              <div className="bg-primary-gray-light dark:bg-primary-gray-dark rounded-xl-large p-4 md:p-5 mb-6 border border-primary-gray-light dark:border-primary-gray-medium">
-                <p className="text-xs md:text-sm font-bold text-primary-gray-dark dark:text-primary-gray-light mb-3">I tuoi tentativi:</p>
-                <div className="space-y-2">
-                  {attempts.map((attempt, idx) => {
-                    const error = calculateError(attempt, currentTarget)
-                    const isBest = error === currentBestError
-                    return (
-                      <div 
-                        key={idx} 
-                        className={`flex justify-between items-center p-3 md:p-4 rounded-xl-large ${
-                          isBest ? 'bg-primary-yellow/20 dark:bg-primary-yellow-dark/20 border-2 border-primary-yellow dark:border-primary-yellow-dark' : 'bg-white dark:bg-primary-gray-medium border border-primary-gray-light dark:border-primary-gray-medium'
-                        }`}
-                      >
-                        <span className="text-xs md:text-sm text-primary-gray-dark dark:text-primary-gray-light font-medium">
-                          Tentativo {idx + 1}: {formatLength(attempt)} cm
-                        </span>
-                        <span className={`text-xs md:text-sm font-bold ${
-                          isBest ? 'text-primary-yellow-dark dark:text-primary-yellow' : 'text-primary-gray-medium dark:text-primary-gray-light'
-                        }`}>
-                          Errore: {formatLength(error)} cm
-                          {isBest && ' • Migliore'}
-                        </span>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-
-              <button
-                onClick={handleNextRound}
-                className="px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-bold bg-gradient-to-r from-primary-yellow to-primary-yellow-dark rounded-xl-large hover:shadow-yellow-glow transition-all shadow-soft-lg transform hover:scale-105 active:scale-95"
-                style={{ color: '#1C1C1C' }}
-              >
-                {currentRound < 2 ? 'Prossimo Round →' : 'Vedi Risultato Finale'}
-              </button>
-            </div>
+        <main className={`${pagina} entra`}>
+          <div className="flex items-baseline justify-between gap-4">
+            <h1 className="text-lg font-bold">Round {currentRound + 1} di 3</h1>
+            <p className="text-sm text-grafite">Completato</p>
           </div>
+
+          <p className="mt-8 text-grafite">Hai sbagliato di</p>
+          <p className="cifre mt-2 text-[clamp(4.5rem,22vw,11rem)] text-errore">
+            <Cifra valore={currentBestError} durata={900} />
+            <span className="text-[0.32em]"> cm</span>
+          </p>
+
+          <div className="-mx-5 mt-10 md:mx-0">
+            <Confronto tuoCm={bestAttempt} giustoCm={currentTarget} />
+          </div>
+
+          <ul className="mt-10 border-t border-riga">
+            {attempts.map((attempt, idx) => {
+              const error = calculateError(attempt, currentTarget)
+              const isBest = error === currentBestError
+              return (
+                <li
+                  key={idx}
+                  className={`flex items-baseline justify-between gap-4 border-b border-riga py-3.5 ${isBest ? 'font-bold' : 'text-grafite'}`}
+                >
+                  <span className="whitespace-nowrap">
+                    Tentativo {idx + 1}: {formatLength(attempt)} cm
+                  </span>
+                  <span className="whitespace-nowrap text-sm">
+                    scarto {formatLength(error)} cm
+                  </span>
+                </li>
+              )
+            })}
+          </ul>
+
+          <button onClick={handleNextRound} className="btn btn-inchiostro mt-10 w-full sm:w-auto sm:px-10">
+            {currentRound < 2 ? 'Prossimo round' : 'Vedi il risultato finale'}
+          </button>
         </main>
       </>
     )
@@ -427,61 +351,54 @@ export default function PlayPage() {
   return (
     <>
       <Navbar />
-        <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16 relative z-10">
-          <div className="bg-white/90 dark:bg-primary-gray-medium backdrop-blur-sm rounded-2xl-large shadow-soft-lg p-6 md:p-8 border border-primary-gray-light dark:border-primary-gray-medium relative">
-            <CmReferenceBox />
-            <div className="text-center mb-6 md:mb-8 pt-20 md:pt-0">
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary-gray-dark dark:text-primary-gray-light mb-3 md:mb-4">
-              Round {currentRound + 1} di 3
-            </h1>
-            <p className="text-base md:text-lg text-primary-gray-medium dark:text-primary-gray-light mb-3 md:mb-4 font-medium">
-              Tentativo {currentAttempt + 1} di 2
-            </p>
-            <div className="bg-primary-yellow/10 dark:bg-primary-yellow-dark/10 rounded-xl-large p-4 md:p-6 mb-4 md:mb-6 border-2 border-primary-yellow/30 dark:border-primary-yellow-dark/30">
-              <p className="text-xs md:text-sm text-primary-gray-medium dark:text-primary-gray-light mb-1 md:mb-2 font-medium">Lunghezza da indovinare</p>
-              <p className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary-gray-dark dark:text-primary-gray-light">
-                {formatLength(currentTarget)} cm
-              </p>
-            </div>
-            {attempts.length > 0 && (
-              <div className="mt-4 space-y-2">
-                {attempts.map((attempt, idx) => {
-                  const error = calculateError(attempt, currentTarget)
-                  return (
-                    <p key={idx} className="text-xs md:text-sm text-primary-gray-medium dark:text-primary-gray-light font-medium">
-                      Tentativo {idx + 1}: {formatLength(attempt)} cm 
-                      (errore: {formatLength(error)} cm)
-                    </p>
-                  )
-                })}
-              </div>
-            )}
+      <main key={currentRound} className={`${pagina} entra`}>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-lg font-bold">Round {currentRound + 1} di 3</h1>
+            <p className="text-sm text-grafite">Tentativo {currentAttempt + 1} di 2</p>
           </div>
-
-          <div className="mb-6 md:mb-8 overflow-hidden">
-            <div className="flex items-center justify-center w-full">
-              {/* Metro giallo allungabile (centrato, senza riferimento a sinistra) */}
-              <Meter
-                length={meterLength}
-                onLengthChange={setMeterLength}
-                maxLength={maxLength}
-              />
-            </div>
-            {/* Non mostriamo la lunghezza attuale - l'utente deve indovinare ad occhio */}
-          </div>
-
-          <div className="text-center">
-            <button
-              onClick={handleConfirm}
-              disabled={roundComplete}
-              className="px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-bold text-primary-gray-dark dark:text-primary-gray-dark bg-gradient-to-r from-primary-yellow to-primary-yellow-dark rounded-xl-large hover:shadow-yellow-glow transition-all shadow-soft-lg transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-            >
-              Conferma Tentativo
-            </button>
-          </div>
+          <CmReferenceBox />
         </div>
+
+        <p className="mt-8 text-grafite">Allunga il metro fino a</p>
+        <p className="cifre mt-2 text-[clamp(5rem,24vw,12rem)]">
+          <Cifra valore={currentTarget} durata={500} />
+          <span className="text-[0.32em]"> cm</span>
+        </p>
+
+        {/* Non mostriamo la lunghezza attuale - l'utente deve indovinare ad occhio */}
+        <div className="-mx-5 mt-8 md:mx-0">
+          <Meter
+            length={meterLength}
+            onLengthChange={setMeterLength}
+            maxLength={maxLength}
+          />
+        </div>
+        <p className="mt-1 text-sm text-grafite">
+          Trascina il gancio per allungare il metro. Usare un righello non è la scelta migliore.
+        </p>
+
+        {attempts.length > 0 && (
+          <div className="dissolvi mt-6 border-l-2 border-nastro pl-3 text-sm">
+            {attempts.map((attempt, idx) => {
+              const error = calculateError(attempt, currentTarget)
+              return (
+                <p key={idx}>
+                  Tentativo {idx + 1}: {formatLength(attempt)} cm, scarto {formatLength(error)} cm
+                </p>
+              )
+            })}
+          </div>
+        )}
+
+        <button
+          onClick={handleConfirm}
+          disabled={roundComplete}
+          className="btn btn-nastro mt-8 w-full sm:w-auto sm:px-14"
+        >
+          Conferma
+        </button>
       </main>
     </>
   )
 }
-

@@ -159,7 +159,7 @@ export function sanitizeUsername(username: string): string {
 
   return username
     .trim()
-    .replace(/[<>'"\\]/g, '') // Rimuove caratteri pericolosi
+    .replace(/[^a-zA-Z0-9_-]/g, '') // Mantiene solo caratteri consentiti per username
     .replace(/\s+/g, '') // Rimuove spazi
     .substring(0, 30) // Limita lunghezza
 }

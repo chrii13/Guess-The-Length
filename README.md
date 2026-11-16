@@ -95,6 +95,24 @@ npm run dev
 
 Apri [http://localhost:3000](http://localhost:3000)
 
+### Test su Telefono in Locale
+
+Per provare l'app dal telefono sulla stessa rete Wi-Fi:
+
+```bash
+npm run dev:host
+```
+
+Poi trova l'indirizzo IP locale del PC:
+
+```powershell
+ipconfig
+```
+
+Sul telefono apri `http://IP_DEL_PC:3000`, ad esempio `http://192.168.1.20:3000`.
+
+Nota PWA: su rete locale HTTP puoi testare navigazione, login, gioco e layout mobile. La registrazione completa del service worker e l'installazione PWA richiedono un contesto sicuro: `localhost`, HTTPS, oppure un deploy/tunnel HTTPS.
+
 ---
 
 ## 🎮 Come Giocare
@@ -128,6 +146,7 @@ Apri [http://localhost:3000](http://localhost:3000)
 
 - **Frontend**: Next.js 14, React 18, TypeScript 5, Tailwind CSS 3.3
 - **Backend**: Supabase (Auth + PostgreSQL con RLS)
+- **PWA**: manifest installabile, service worker online-first, supporto home screen mobile
 - **Sicurezza**: DOMPurify, CSRF Protection, Rate Limiting, Security Headers
 - **Testing**: Jest 29 con suite test di sicurezza
 - **Deploy**: Vercel (consigliato)

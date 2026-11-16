@@ -1,5 +1,5 @@
 // Utility per sanitizzazione input
-import DOMPurify from 'isomorphic-dompurify'
+import type { NextRequest } from 'next/server'
 
 /**
  * Sanitizza una stringa rimuovendo caratteri pericolosi
@@ -54,6 +54,8 @@ export function sanitizeHtml(html: string): string {
   if (typeof html !== 'string') {
     return ''
   }
+
+  const DOMPurify = require('isomorphic-dompurify')
 
   return DOMPurify.sanitize(html, {
     ALLOWED_TAGS: [],
@@ -125,7 +127,4 @@ export async function sanitizeRequestBody(request: NextRequest): Promise<any> {
     return null
   }
 }
-
-// Import per NextRequest
-import { NextRequest } from 'next/server'
 
