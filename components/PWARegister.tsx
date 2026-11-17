@@ -8,6 +8,15 @@ export function PWARegister() {
       return
     }
 
+    // In sviluppo i file JavaScript cambiano a ogni modifica ma tengono lo stesso nome:
+    // il service worker servirebbe versioni vecchie dalla cache, quindi lo togliamo
+    if (process.env.NODE_ENV !== 'production') {
+      navigator.serviceWorker.getRegistrations().then((registrazioni) => {
+        registrazioni.forEach((registrazione) => registrazione.unregister())
+      })
+      return
+    }
+
     const registerServiceWorker = () => {
       navigator.serviceWorker.register('/sw.js').catch((error) => {
         console.warn('Service worker registration failed:', error)

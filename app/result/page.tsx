@@ -139,7 +139,7 @@ export default function ResultPage() {
                         {formatLength(session.score)}
                         <span className="text-[0.55em]"> cm</span>
                         {isBest && (
-                          <span className="ml-3 bg-nastro px-2 py-0.5 align-middle font-sans text-xs font-bold tracking-normal text-pece" style={{ fontStretch: '100%' }}>
+                          <span className="ml-3 rounded-lg bg-nastro px-2 py-0.5 align-middle font-sans text-xs font-bold tracking-normal text-pece">
                             La migliore
                           </span>
                         )}

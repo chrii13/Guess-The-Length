@@ -5,14 +5,12 @@ import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import { useAuth } from './AuthProvider'
 import { supabase } from '@/lib/supabase'
-import { useTheme } from '@/hooks/useTheme'
 
 export function HamburgerMenu() {
   const [isOpen, setIsOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const { user } = useAuth()
   const router = useRouter()
-  const { theme, toggleTheme, mounted: themeMounted } = useTheme()
 
   // Assicurati che il componente sia montato (per SSR)
   useEffect(() => {
@@ -66,7 +64,7 @@ export function HamburgerMenu() {
     </svg>
   )
 
-  if (!mounted || !themeMounted) {
+  if (!mounted) {
     return (
       <button className="-mr-2 p-2" aria-label="Menu" type="button" disabled>
         {icona(false)}
@@ -105,25 +103,6 @@ export function HamburgerMenu() {
               <button onClick={handleProfile} className={voce}>Profilo</button>
             </>
           )}
-
-          {/* Cambio tema */}
-          <div className="py-5">
-            <p className="mb-2 text-sm text-grafite">Tema</p>
-            <div className="grid grid-cols-2 gap-2">
-              {(['light', 'dark'] as const).map((opzione) => (
-                <button
-                  key={opzione}
-                  onClick={() => {
-                    if (theme !== opzione) toggleTheme()
-                  }}
-                  aria-pressed={theme === opzione}
-                  className={`btn px-4 py-2.5 text-sm ${theme === opzione ? 'btn-inchiostro' : 'btn-linea'}`}
-                >
-                  {opzione === 'light' ? 'Chiaro' : 'Scuro'}
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
 
         {user && (

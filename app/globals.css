@@ -3,26 +3,27 @@
 @tailwind utilities;
 
 :root {
-  --carta: 236 238 234;
-  --foglio: 247 248 245;
-  --inchiostro: 27 29 31;
-  --grafite: 91 97 103;
-  --riga: 201 205 200;
-  --nastro: 255 210 31;
-  --errore: 217 40 30;
-  --acciaio: 141 148 155;
-  /* Scuro fisso: testo e tacche sul giallo del nastro, in entrambi i temi */
-  --pece: 27 29 31;
-}
-
-.dark {
+  /* L'app è solo a tema scuro */
   color-scheme: dark;
-  --carta: 23 25 27;
-  --foglio: 32 35 38;
-  --inchiostro: 236 238 234;
-  --grafite: 163 169 174;
-  --riga: 52 56 60;
-  --errore: 255 90 79;
+  --carta: 21 23 25;
+  --foglio: 31 34 37;
+  --inchiostro: 238 240 236;
+  --grafite: 165 171 176;
+  --riga: 53 57 61;
+  --nastro: 255 210 31;
+  --errore: 255 92 80;
+  --acciaio: 141 148 155;
+  /* Scuro fisso: testo e tacche sul giallo del nastro */
+  --pece: 21 23 25;
+  /* Gradino pieno sotto i bottoni: un tono più scuro del loro colore */
+  --nastro-ombra: 196 152 0;
+  --inchiostro-ombra: 160 165 158;
+  /* Tinte per sfondi di avvisi, scelte attive e risultati */
+  --nastro-tinta: 58 49 14;
+  --errore-tinta: 64 27 25;
+  --errore-ombra: 176 44 36;
+  /* Grigio per ciò che conta meno: posizioni basse, etichette spente */
+  --sbiadito: 108 115 121;
 }
 
 @layer base {
@@ -47,51 +48,61 @@
 }
 
 @layer components {
-  /* Numeri e titoli: Archivo stretto e pesante, come le cifre stampate su un metro */
+  /* Numeri e titoli: tondi e pesanti, come le cifre stampate su un metro */
   .cifre {
-    font-stretch: 68%;
-    font-weight: 800;
-    line-height: 0.92;
-    letter-spacing: -0.01em;
+    font-family: var(--font-display), ui-rounded, system-ui, sans-serif;
+    font-weight: 900;
+    line-height: 0.98;
+    letter-spacing: -0.02em;
     font-variant-numeric: tabular-nums;
   }
 
+  /* Bottoni come tasti: un gradino pieno sotto, che sparisce quando li premi */
   .btn {
-    @apply inline-flex items-center justify-center rounded-lg px-6 py-3.5 text-base font-bold;
-    transition: transform 120ms ease-out, background-color 120ms ease-out, opacity 120ms ease-out;
+    @apply inline-flex items-center justify-center rounded-xl px-6 py-3.5 text-[15px] font-extrabold uppercase;
+    letter-spacing: 0.053em;
+    box-shadow: 0 var(--gradino, 0px) 0 var(--colore-gradino, transparent);
+    transition: transform 70ms ease-out, box-shadow 70ms ease-out, filter 120ms ease-out;
+  }
+
+  .btn:hover {
+    filter: brightness(1.05);
   }
 
   .btn:active {
-    transform: scale(0.97);
+    transform: translateY(var(--gradino, 0px));
+    box-shadow: none;
   }
 
-  .btn:disabled {
+  .btn:disabled,
+  .btn:disabled:active {
     @apply cursor-not-allowed opacity-50;
+    filter: none;
     transform: none;
+    box-shadow: 0 var(--gradino, 0px) 0 var(--colore-gradino, transparent);
   }
 
   .btn-nastro {
     @apply bg-nastro text-pece;
-  }
-
-  .btn-nastro:hover {
-    background-color: #f2c300;
+    --gradino: 4px;
+    --colore-gradino: rgb(var(--nastro-ombra));
   }
 
   .btn-inchiostro {
     @apply bg-inchiostro text-carta;
-  }
-
-  .btn-inchiostro:hover {
-    @apply opacity-90;
+    --gradino: 4px;
+    --colore-gradino: rgb(var(--inchiostro-ombra));
   }
 
   .btn-linea {
-    @apply border border-inchiostro text-inchiostro;
+    @apply border border-riga bg-foglio text-inchiostro;
+    --gradino: 2px;
+    --colore-gradino: rgb(var(--riga));
   }
 
   .btn-linea:hover {
-    @apply bg-inchiostro text-carta;
+    filter: none;
+    @apply bg-carta;
   }
 
   .collegamento {
@@ -107,7 +118,7 @@
   }
 
   .campo {
-    @apply w-full rounded-lg border border-riga bg-foglio px-4 py-3 text-inchiostro;
+    @apply w-full rounded-xl border border-riga bg-foglio px-4 py-3 text-inchiostro;
     transition: border-color 120ms ease-out;
   }
 
@@ -122,11 +133,11 @@
   }
 
   .avviso-errore {
-    @apply rounded-lg border border-errore px-4 py-3 text-sm text-errore;
+    @apply rounded-xl border border-errore/30 bg-errore-tinta px-4 py-3 text-sm font-semibold text-errore;
   }
 
   .avviso-ok {
-    @apply rounded-lg border border-inchiostro px-4 py-3 text-sm;
+    @apply rounded-xl border border-nastro bg-nastro-tinta px-4 py-3 text-sm font-semibold;
   }
 
   .caricamento {
@@ -242,5 +253,125 @@
 
   .caricamento::after {
     animation: scorri 900ms ease-in-out infinite;
+  }
+
+  @keyframes vista-su {
+    from {
+      opacity: 0;
+      transform: translateY(32px);
+    }
+  }
+
+  @keyframes vista-sinistra {
+    from {
+      opacity: 0;
+      transform: translateX(-56px);
+    }
+  }
+
+  @keyframes vista-destra {
+    from {
+      opacity: 0;
+      transform: translateX(56px);
+    }
+  }
+
+  @keyframes vista-scala {
+    from {
+      opacity: 0;
+      transform: scale(0.82);
+    }
+  }
+
+  @keyframes parola {
+    from {
+      opacity: 0;
+      transform: translateY(0.5em) rotate(5deg);
+    }
+  }
+
+  /* Il metro che si allunga oltre il segno e torna indietro, come tirato a mano */
+  @keyframes allunga {
+    0% {
+      transform: scaleX(0.08);
+    }
+    55% {
+      transform: scaleX(1.12);
+    }
+    75% {
+      transform: scaleX(0.95);
+    }
+    100% {
+      transform: scaleX(1);
+    }
+  }
+
+  @keyframes nastro-scorre {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes numero-cambia {
+    from {
+      opacity: 0;
+      transform: translateY(-0.4em) scale(0.9);
+    }
+  }
+
+  /* Elementi che si animano quando il loro blocco <Rivela> entra nello schermo: fermi al primo fotogramma fino ad allora */
+  .vista {
+    animation-duration: 700ms;
+    animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+    animation-fill-mode: both;
+    animation-delay: var(--ritardo, 0ms);
+  }
+
+  [data-in-vista='false'] .vista,
+  [data-in-vista='false'].vista {
+    animation-play-state: paused;
+  }
+
+  .vista-su {
+    animation-name: vista-su;
+  }
+
+  .vista-sinistra {
+    animation-name: vista-sinistra;
+  }
+
+  .vista-destra {
+    animation-name: vista-destra;
+  }
+
+  .vista-scala {
+    animation-name: vista-scala;
+    animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .vista-srotola {
+    animation-name: srotola;
+    animation-duration: 900ms;
+    transform-origin: left center;
+  }
+
+  .vista-allunga {
+    animation-name: allunga;
+    animation-duration: 1300ms;
+    animation-timing-function: ease-in-out;
+  }
+
+  .parola {
+    display: inline-block;
+    animation-name: parola;
+    animation-duration: 600ms;
+  }
+
+  .nastro-scorre {
+    animation: nastro-scorre 22s linear infinite;
+  }
+
+  .numero-cambia {
+    animation: numero-cambia 380ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
   }
 }

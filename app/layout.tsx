@@ -1,14 +1,12 @@
 import type { Metadata, Viewport } from 'next'
-import { Archivo } from 'next/font/google'
+import { Nunito, Nunito_Sans } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from '@/components/AuthProvider'
 import { Footer } from '@/components/Footer'
 import { PWARegister } from '@/components/PWARegister'
 
-const archivo = Archivo({ subsets: ['latin'], axes: ['wdth'], variable: '--font-archivo' })
-
-// Applica il tema salvato prima del primo paint, per evitare il lampo chiaro
-const themeScript = `try{var t=localStorage.getItem('guess-the-length-theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark')}catch(e){}`
+const display = Nunito({ subsets: ['latin'], variable: '--font-display' })
+const corpo = Nunito_Sans({ subsets: ['latin'], variable: '--font-corpo' })
 
 export const metadata: Metadata = {
   title: 'Guess the Length - Indovina la Lunghezza',
@@ -18,7 +16,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     title: 'Guess the Length',
-    statusBarStyle: 'default',
+    statusBarStyle: 'black',
   },
   icons: {
     icon: [{ url: '/assets/icon.svg', type: 'image/svg+xml' }],
@@ -27,10 +25,8 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#ECEEEA' },
-    { media: '(prefers-color-scheme: dark)', color: '#17191B' },
-  ],
+  themeColor: '#151719',
+  colorScheme: 'dark',
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
@@ -42,9 +38,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="it" className={`${archivo.variable} h-full`} suppressHydrationWarning>
+    <html lang="it" className={`${display.variable} ${corpo.variable} h-full`}>
       <body className="min-h-screen flex flex-col">
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <PWARegister />
         <AuthProvider>
           <div className="flex-1">

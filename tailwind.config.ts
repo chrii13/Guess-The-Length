@@ -9,7 +9,6 @@ const config: Config = {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './hooks/**/*.{js,ts,jsx,tsx,mdx}',
   ],
-  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -18,13 +17,20 @@ const config: Config = {
         inchiostro: token('inchiostro'),
         grafite: token('grafite'),
         riga: token('riga'),
-        nastro: token('nastro'),
-        errore: token('errore'),
+        // Ogni colore ha le sue varianti: tinta per gli sfondi, ombra per il gradino dei bottoni
+        nastro: { DEFAULT: token('nastro'), tinta: token('nastro-tinta'), ombra: token('nastro-ombra') },
+        errore: { DEFAULT: token('errore'), tinta: token('errore-tinta'), ombra: token('errore-ombra') },
+        sbiadito: token('sbiadito'),
         acciaio: token('acciaio'),
         pece: token('pece'),
       },
       fontFamily: {
-        sans: ['var(--font-archivo)', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-corpo)', 'system-ui', 'sans-serif'],
+        display: ['var(--font-display)', 'ui-rounded', 'system-ui', 'sans-serif'],
+      },
+      // Bordi spessi come adesivi: ogni `border` è da 2px
+      borderWidth: {
+        DEFAULT: '2px',
       },
     },
   },

@@ -29,10 +29,10 @@ export function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 border-b border-riga bg-carta">
-      <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-4 px-5">
+      <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-3 px-4 sm:px-5">
         <div className="flex min-w-0 items-center gap-6">
-          <Link href="/" className="flex shrink-0 items-center gap-2 font-bold">
-            <svg viewBox="0 0 20 20" className="h-5 w-5 rounded-[3px]" aria-hidden="true">
+          <Link href="/" className="flex shrink-0 items-center gap-2 font-display text-base font-black sm:text-lg">
+            <svg viewBox="0 0 20 20" className="h-6 w-6 rounded-md" aria-hidden="true">
               <rect width="20" height="20" fill="rgb(var(--nastro))" />
               <path d="M5 0v6M8.5 0v10M12 0v5M15 0v12" stroke="rgb(var(--pece))" strokeWidth="1.3" />
             </svg>
@@ -46,7 +46,7 @@ export function Navbar() {
           )}
         </div>
 
-        <div className="flex min-w-0 items-center gap-3">
+        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           {loading ? (
             <div className="caricamento" role="status" aria-label="Caricamento" />
           ) : user ? (
@@ -58,10 +58,10 @@ export function Navbar() {
             </>
           ) : (
             <>
-              <Link href="/login" className="px-2 py-2 text-sm font-semibold hover:underline">
+              <Link href="/login" className="px-1 py-2 text-sm font-semibold hover:underline sm:px-2">
                 Accedi
               </Link>
-              <Link href="/register" className="btn btn-inchiostro px-4 py-2 text-sm">
+              <Link href="/register" className="btn btn-inchiostro px-3 py-2 text-xs sm:px-4 sm:text-sm">
                 Registrati
               </Link>
             </>

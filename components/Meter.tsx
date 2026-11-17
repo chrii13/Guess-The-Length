@@ -266,7 +266,7 @@ export function Meter({ length, onLengthChange, maxLength }: MeterProps) {
           style={{ width: `${length}px` }}
         >
           {/* Nastro giallo con tacche irregolari */}
-          <div className="absolute inset-0 overflow-hidden border-y border-pece bg-nastro md:border-l">
+          <div className="absolute inset-0 overflow-hidden border-y border-pece bg-nastro md:rounded-l-md md:border-l">
             {markings.map((mark, index) => (
               <div
                 key={index}
@@ -282,7 +282,7 @@ export function Meter({ length, onLengthChange, maxLength }: MeterProps) {
 
           {/* Gancio in acciaio: la maniglia da trascinare */}
           <div
-            className="metro-gancio absolute -bottom-2 -right-px -top-2 w-3.5 rounded-sm border border-pece bg-acciaio"
+            className="metro-gancio absolute -bottom-2 -right-px -top-2 w-4 rounded-md border border-pece bg-acciaio"
             data-trascina={isDragging}
           />
         </div>

@@ -236,11 +236,11 @@ export default function PlayPage() {
           )}
 
           {isNewRecord && !showNewBestScore && (
-            <p className="mt-4 inline-block bg-nastro px-3 py-1.5 font-bold text-pece">Nuovo record personale</p>
+            <p className="mt-4 inline-block rounded-xl bg-nastro px-3 py-1.5 font-bold text-pece">Nuovo record personale</p>
           )}
 
           {isFirstGame && (
-            <p className="mt-4 inline-block bg-nastro px-3 py-1.5 font-bold text-pece">Primo punteggio salvato</p>
+            <p className="mt-4 inline-block rounded-xl bg-nastro px-3 py-1.5 font-bold text-pece">Primo punteggio salvato</p>
           )}
 
           {saving && (
@@ -248,7 +248,7 @@ export default function PlayPage() {
           )}
 
           {ospite && (
-            <p className="mt-6 max-w-[44ch] border-l-2 border-nastro pl-3">
+            <p className="mt-6 max-w-[48ch] rounded-2xl border border-nastro bg-nastro-tinta px-5 py-4">
               Hai giocato come ospite, quindi questo punteggio non è stato salvato.{' '}
               <Link href="/register" className="collegamento">Registrati</Link> o{' '}
               <Link href="/login" className="collegamento">accedi</Link> per salvare i prossimi ed entrare in classifica.
@@ -320,11 +320,13 @@ export default function PlayPage() {
             <p className="text-sm text-grafite">Completato</p>
           </div>
 
-          <p className="mt-8 text-grafite">Hai sbagliato di</p>
-          <p className="cifre mt-2 text-[clamp(4.5rem,22vw,11rem)] text-errore">
-            <Cifra valore={currentBestError} durata={900} />
-            <span className="text-[0.32em]"> cm</span>
-          </p>
+          <div className="mt-8 rounded-2xl bg-errore-tinta px-5 pb-5 pt-4">
+            <p className="font-bold text-errore">Hai sbagliato di</p>
+            <p className="cifre mt-2 text-[clamp(4rem,20vw,10rem)] text-errore">
+              <Cifra valore={currentBestError} durata={900} />
+              <span className="text-[0.32em]"> cm</span>
+            </p>
+          </div>
 
           <div className="-mx-5 mt-10 md:mx-0">
             <Confronto tuoCm={bestAttempt} giustoCm={currentTarget} />
@@ -389,7 +391,7 @@ export default function PlayPage() {
         </p>
 
         {attempts.length > 0 && (
-          <div className="dissolvi mt-6 border-l-2 border-nastro pl-3 text-sm">
+          <div className="dissolvi mt-6 rounded-xl bg-nastro-tinta px-4 py-3 text-sm font-semibold">
             {attempts.map((attempt, idx) => {
               const error = calculateError(attempt, currentTarget)
               return (

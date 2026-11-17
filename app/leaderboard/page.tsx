@@ -55,7 +55,7 @@ export default function LeaderboardPage() {
                     style={{ ['--i' as string]: index }}
                   >
                     <div className="flex items-baseline gap-4">
-                      <span className={`cifre w-10 shrink-0 ${isTopThree ? 'text-4xl' : 'text-2xl text-grafite'}`}>
+                      <span className={`cifre w-10 shrink-0 ${isTopThree ? 'text-4xl' : 'text-2xl text-sbiadito'}`}>
                         {index + 1}
                       </span>
                       <span className={`min-w-0 flex-1 truncate ${isTopThree ? 'text-lg font-bold' : 'font-semibold'}`}>

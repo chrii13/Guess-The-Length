@@ -1,58 +1,60 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Navbar } from '@/components/Navbar'
 import { useAuth } from '@/components/AuthProvider'
+import { Rivela, Parole, Conta } from '@/components/home/Rivela'
+import { MetroDemo, TACCHE } from '@/components/home/MetroDemo'
+import { BarraScorrimento } from '@/components/home/BarraScorrimento'
+import { getLeaderboard, type Score } from '@/lib/scores'
+import { formatLength } from '@/lib/game'
+import { sanitizeString } from '@/lib/sanitize'
 
-const passi = [
-  {
-    titolo: 'Ti viene data una lunghezza',
-    testo: 'Per esempio 7,40 cm. In una partita sono tre, scelte a caso.',
-  },
-  {
-    titolo: 'Allunghi il metro a occhio',
-    testo: 'Trascini il gancio finché ti sembra giusto. Hai due tentativi per ogni lunghezza e conta il migliore.',
-  },
-  {
-    titolo: 'Scopri di quanto hai sbagliato',
-    testo: 'Il punteggio è la somma dei tre scarti, in centimetri. Meno è, meglio è.',
-  },
+const numeri = [
+  { valore: 3, testo: 'lunghezze da indovinare in ogni partita' },
+  { valore: 2, testo: 'tentativi per ognuna, conta il migliore' },
+  { valore: 15, testo: 'centimetri al massimo, 8 su telefono' },
 ]
+
+const misureNastro = ['7,40', '3,45', '12,60', '0,38', '9,80', '5,15', '2,30', '14,05', '6,62', '1,27']
+
+const v = (ms: number) => ({ ['--ritardo' as string]: `${ms}ms` })
 
 export default function Home() {
   const { user, loading } = useAuth()
   const ospite = !loading && !user
+  const [podio, setPodio] = useState<Score[] | null>(null)
+
+  useEffect(() => {
+    getLeaderboard(3)
+      .then(setPodio)
+      .catch(() => setPodio([]))
+  }, [])
+
+  const giocaTesto = ospite ? 'Gioca come ospite' : 'Gioca'
 
   return (
     <>
       <Navbar />
-      <main className="mx-auto max-w-3xl px-5 pb-16 pt-10 md:pt-20">
-        <div className="entra">
-          <h1 className="cifre text-[clamp(3.6rem,15vw,8rem)]">Guess the Length</h1>
+      <BarraScorrimento />
 
-          {/* Il metro del gioco, qui solo come segno grafico */}
-          <div className="-mx-5 mt-6 md:mx-0" aria-hidden="true">
-            <div
-              className="srotola h-10 w-[72%] max-w-md border-y border-pece bg-nastro md:border-l"
-              style={{
-                ['--ritardo' as string]: '200ms',
-                backgroundImage:
-                  'linear-gradient(90deg, rgb(var(--pece)) 0 1px, transparent 1px), linear-gradient(90deg, rgb(var(--pece)) 0 2px, transparent 2px)',
-                backgroundSize: '13px 38%, 91px 70%',
-                backgroundRepeat: 'repeat-x',
-                backgroundPosition: '9px 0, 48px 0',
-              }}
-            />
+      <main className="overflow-x-clip">
+        {/* Apertura */}
+        <Rivela className="mx-auto max-w-4xl px-5 pb-20 pt-12 md:pt-20">
+          <h1 className="cifre text-[clamp(3.6rem,15vw,8.5rem)]">
+            <Parole testo="Guess the Length" passo={110} />
+          </h1>
+          <div className="vista vista-su mt-8" style={v(450)}>
+            <MetroDemo />
           </div>
-
-          <p className="mt-8 max-w-[40ch] text-xl leading-relaxed">
+          <p className="vista vista-su mt-4 max-w-[42ch] text-xl leading-relaxed text-grafite" style={v(650)}>
             Il gioco in cui misuri a occhio: allunga il metro fino alla lunghezza richiesta, senza righello.
             Vince chi sbaglia meno.
           </p>
-
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="vista vista-su mt-8 flex flex-col gap-3 sm:flex-row sm:items-center" style={v(800)}>
             <Link href="/play" className="btn btn-nastro sm:px-12">
-              {ospite ? 'Gioca come ospite' : 'Gioca'}
+              {giocaTesto}
             </Link>
             {ospite && (
               <Link href="/login" className="btn btn-linea">
@@ -61,7 +63,7 @@ export default function Home() {
             )}
           </div>
           {ospite && (
-            <p className="mt-3 text-sm text-grafite">
+            <p className="vista vista-su mt-3 text-sm text-grafite" style={v(900)}>
               Da ospite il punteggio non viene salvato.{' '}
               <Link href="/register" className="collegamento text-inchiostro">
                 Registrati
@@ -69,36 +71,170 @@ export default function Home() {
               per salvarlo ed entrare in classifica.
             </p>
           )}
-        </div>
+        </Rivela>
 
-        <section className="mt-16">
-          <h2 className="text-lg font-bold">Come si gioca</h2>
-          <ol className="mt-4 border-t border-riga">
-            {passi.map((passo, index) => (
-              <li
-                key={passo.titolo}
-                className="riga-entra flex gap-5 border-b border-riga py-5"
-                style={{ ['--i' as string]: index + 3 }}
-              >
-                <span className="cifre w-8 shrink-0 text-5xl">{index + 1}</span>
-                <div>
-                  <h3 className="font-bold">{passo.titolo}</h3>
-                  <p className="mt-1 max-w-[52ch] text-grafite">{passo.testo}</p>
+        {/* Il gioco in tre numeri */}
+        <Rivela as="section" className="mx-auto grid max-w-4xl gap-4 px-5 pb-24 sm:grid-cols-3" aria-label="Il gioco in numeri">
+          {numeri.map((n, i) => (
+            <div
+              key={n.testo}
+              className="vista vista-scala rounded-2xl border border-riga bg-foglio p-6"
+              style={v(i * 140)}
+            >
+              <p className="cifre text-7xl text-nastro">
+                <Conta valore={n.valore} durata={800 + i * 200} />
+              </p>
+              <p className="mt-3 font-semibold text-grafite">{n.testo}</p>
+            </div>
+          ))}
+        </Rivela>
+
+        {/* Come si gioca */}
+        <section className="mx-auto max-w-4xl px-5 pb-24" aria-labelledby="come-si-gioca">
+          <Rivela>
+            <h2 id="come-si-gioca" className="cifre text-[clamp(2.6rem,9vw,4.5rem)]">
+              <Parole testo="Come si gioca" />
+            </h2>
+          </Rivela>
+
+          <div className="mt-12 grid gap-20">
+            <Rivela className="grid items-center gap-8 md:grid-cols-2">
+              <div className="vista vista-sinistra">
+                <p className="cifre text-2xl text-nastro">1</p>
+                <h3 className="mt-2 text-2xl font-extrabold">Ti viene data una lunghezza</h3>
+                <p className="mt-2 max-w-[40ch] text-lg text-grafite">
+                  Un numero in centimetri, scelto a caso. In una partita sono tre.
+                </p>
+              </div>
+              <div className="vista vista-destra rounded-3xl bg-nastro-tinta px-8 py-10" style={v(150)}>
+                <p className="text-sm font-bold text-grafite">Allunga il metro fino a</p>
+                <p className="cifre mt-2 text-7xl text-nastro">
+                  <Conta valore={7.4} cm durata={1100} />
+                  <span className="text-3xl"> cm</span>
+                </p>
+              </div>
+            </Rivela>
+
+            <Rivela className="grid items-center gap-8 md:grid-cols-2">
+              <div className="vista vista-destra md:order-2">
+                <p className="cifre text-2xl text-nastro">2</p>
+                <h3 className="mt-2 text-2xl font-extrabold">Allunghi il metro a occhio</h3>
+                <p className="mt-2 max-w-[40ch] text-lg text-grafite">
+                  Trascini il gancio finché ti sembra giusto. Due tentativi, e conta il migliore.
+                </p>
+              </div>
+              <div className="vista vista-sinistra rounded-3xl border border-riga bg-foglio px-6 py-12 md:order-1" style={v(150)}>
+                <div className="relative h-12">
+                  <div className="vista vista-allunga absolute inset-y-0 left-0 w-[82%] origin-left border-y border-r border-pece bg-nastro" style={{ ...TACCHE, ...v(400) }}>
+                    <div className="absolute -bottom-2 -right-2 -top-2 w-4 rounded-md border border-pece bg-acciaio" />
+                  </div>
                 </div>
-              </li>
-            ))}
-          </ol>
+              </div>
+            </Rivela>
+
+            <Rivela className="grid items-center gap-8 md:grid-cols-2">
+              <div className="vista vista-sinistra">
+                <p className="cifre text-2xl text-nastro">3</p>
+                <h3 className="mt-2 text-2xl font-extrabold">Scopri di quanto hai sbagliato</h3>
+                <p className="mt-2 max-w-[40ch] text-lg text-grafite">
+                  Il punteggio è la somma dei tre scarti. Meno centimetri, più in alto in classifica.
+                </p>
+              </div>
+              <div className="vista vista-destra rounded-3xl border border-riga bg-foglio px-6 py-8" style={v(150)}>
+                <p className="text-sm text-grafite">Il tuo metro</p>
+                <div className="vista vista-srotola mt-1.5 h-9 w-[78%] border-y border-pece bg-nastro" style={{ ...TACCHE, ...v(350) }} />
+                <p className="mt-4 text-sm text-grafite">Lunghezza giusta</p>
+                <div className="mt-1.5 flex h-4">
+                  <div className="vista vista-srotola w-[70%] border-y border-r border-inchiostro" style={v(800)} />
+                  <div className="vista vista-srotola w-[8%] bg-errore" style={v(1350)} />
+                </div>
+                <p className="vista vista-scala mt-5 inline-block rounded-xl bg-errore-tinta px-3 py-1.5 font-bold text-errore" style={v(1650)}>
+                  Scarto 0,38 cm
+                </p>
+              </div>
+            </Rivela>
+          </div>
         </section>
 
-        <section className="mt-12">
-          <h2 className="text-lg font-bold">Classifica</h2>
-          <p className="mt-2 max-w-[52ch] text-grafite">
-            Chi ha un account salva il proprio miglior punteggio e compare nella classifica di tutti i giocatori.
-          </p>
-          <Link href="/leaderboard" className="collegamento mt-3 inline-block">
-            Guarda la classifica
-          </Link>
+        {/* Banda gialla */}
+        <Rivela as="section" className="bg-nastro py-16 text-pece" aria-label="Niente righello">
+          <div className="mx-auto max-w-4xl px-5">
+            <p className="cifre text-[clamp(3rem,12vw,7rem)]">
+              <Parole testo="Niente righello." passo={120} />
+              <br />
+              <Parole testo="Solo il tuo occhio." ritardo={350} passo={120} />
+            </p>
+          </div>
+          <div className="mt-10 overflow-hidden border-y border-pece py-3" aria-hidden="true">
+            <div className="nastro-scorre flex w-max gap-10 font-display text-2xl font-black">
+              {[...misureNastro, ...misureNastro].map((m, i) => (
+                <span key={i} className="whitespace-nowrap">
+                  {m} cm
+                </span>
+              ))}
+            </div>
+          </div>
+        </Rivela>
+
+        {/* Classifica */}
+        <section className="mx-auto max-w-4xl px-5 py-24" aria-labelledby="podio">
+          <Rivela>
+            <h2 id="podio" className="cifre text-[clamp(2.6rem,9vw,4.5rem)]">
+              <Parole testo="Chi misura meglio" />
+            </h2>
+            <p className="vista vista-su mt-3 max-w-[48ch] text-lg text-grafite" style={v(300)}>
+              I tre punteggi più bassi di sempre. Chi ha un account entra in classifica con il suo record.
+            </p>
+          </Rivela>
+
+          <Rivela className="mt-10">
+            {podio === null ? (
+              <div className="caricamento" role="status" aria-label="Caricamento classifica" />
+            ) : podio.length === 0 ? (
+              <p className="vista vista-su text-lg">Il podio è ancora vuoto: il primo posto può essere tuo.</p>
+            ) : (
+              <ol className="grid gap-4">
+                {podio.map((s, i) => (
+                  <li
+                    key={s.id}
+                    className="vista vista-sinistra flex items-center gap-4 rounded-2xl border border-riga bg-foglio p-4 sm:p-5"
+                    style={v(i * 160)}
+                  >
+                    <span className="cifre flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-nastro text-3xl text-pece">
+                      {i + 1}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-lg font-extrabold">{sanitizeString(s.username || 'Utente')}</p>
+                      <div
+                        className="vista vista-srotola mt-2 h-2 rounded-full bg-nastro"
+                        style={{ width: `${Math.max(8, Math.min(100, (podio[0].best_score / Math.max(s.best_score, 0.01)) * 100))}%`, ...v(400 + i * 160) }}
+                      />
+                    </div>
+                    <p className="cifre shrink-0 text-3xl">
+                      {formatLength(s.best_score)}
+                      <span className="text-base"> cm</span>
+                    </p>
+                  </li>
+                ))}
+              </ol>
+            )}
+            <Link href="/leaderboard" className="vista vista-su collegamento mt-6 inline-block" style={v(600)}>
+              Guarda la classifica completa
+            </Link>
+          </Rivela>
         </section>
+
+        {/* Chiusura */}
+        <Rivela as="section" className="mx-auto max-w-4xl px-5 pb-28 text-center" aria-label="Inizia a giocare">
+          <p className="cifre text-[clamp(3rem,12vw,6.5rem)]">
+            <Parole testo="Pronto a misurare?" passo={110} />
+          </p>
+          <div className="vista vista-scala mt-8" style={v(500)}>
+            <Link href="/play" className="btn btn-nastro px-14">
+              {giocaTesto}
+            </Link>
+          </div>
+        </Rivela>
       </main>
     </>
   )

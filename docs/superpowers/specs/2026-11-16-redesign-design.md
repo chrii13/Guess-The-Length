@@ -98,6 +98,13 @@ La transizione globale su `*` viene rimossa.
 - Nomi dei token in italiano.
 - Token aggiuntivo `pece` (`#1B1D1F` fisso): testo e tacche sul giallo, uguale nei due temi.
 - Il testo di aiuto sotto il metro sta nelle pagine, non dentro `Meter`.
+
+## Aggiornamenti successivi (2026-11-17)
+
+- Stile ispirato a Duolingo con i colori di Guess the Length: Nunito e Nunito Sans, bottoni con gradino pieno, bordi da 2px, angoli da 12px, varianti tinta/ombra per giallo e rosso.
+- L'app è solo a tema scuro: niente selettore del tema.
+- Home con animazioni allo scorrimento (`components/home`): metro dimostrativo in loop, numeri che contano, passi che entrano dai lati, banda gialla con misure che scorrono, podio dal vivo, barra di avanzamento a forma di metro.
+- Il service worker si registra solo in produzione.
 - Testi dei titoli riscritti in forma più asciutta (frase normale, senza maiuscole a ogni parola).
 - Colori dei coriandoli: rimossi, sostituiti dall'overlay giallo.
 - Le modifiche PWA non committate restano non committate; il redesign non viene committato finché non viene chiesto.
