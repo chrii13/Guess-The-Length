@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import { useAuth } from './AuthProvider'
@@ -11,6 +11,8 @@ export function HamburgerMenu() {
   const [mounted, setMounted] = useState(false)
   const { user } = useAuth()
   const router = useRouter()
+  const apriRef = useRef<HTMLButtonElement>(null)
+  const pannelloRef = useRef<HTMLElement>(null)
 
   // Assicurati che il componente sia montato (per SSR)
   useEffect(() => {
@@ -28,12 +30,37 @@ export function HamburgerMenu() {
       }
     }
 
+    // Tastiera: Esc chiude, Tab resta dentro il menu
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false)
+        return
+      }
+      if (event.key !== 'Tab' || !pannelloRef.current) return
+      const focusabili = pannelloRef.current.querySelectorAll<HTMLElement>('button, a[href]')
+      const primo = focusabili[0]
+      const ultimo = focusabili[focusabili.length - 1]
+      if (event.shiftKey && document.activeElement === primo) {
+        event.preventDefault()
+        ultimo.focus()
+      } else if (!event.shiftKey && document.activeElement === ultimo) {
+        event.preventDefault()
+        primo.focus()
+      }
+    }
+
     document.addEventListener('click', handleClickOutside)
+    document.addEventListener('keydown', handleKeyDown)
     document.body.style.overflow = 'hidden'
+    // All'apertura il focus entra nel menu; alla chiusura torna al bottone che l'ha aperto
+    pannelloRef.current?.querySelector<HTMLElement>('button')?.focus()
+    const apri = apriRef.current
 
     return () => {
       document.removeEventListener('click', handleClickOutside)
+      document.removeEventListener('keydown', handleKeyDown)
       document.body.style.overflow = ''
+      apri?.focus()
     }
   }, [isOpen])
 
@@ -66,7 +93,7 @@ export function HamburgerMenu() {
 
   if (!mounted) {
     return (
-      <button className="-mr-2 p-2" aria-label="Menu" type="button" disabled>
+      <button className="-mr-2.5 p-2.5" aria-label="Menu" type="button" disabled>
         {icona(false)}
       </button>
     )
@@ -84,13 +111,17 @@ export function HamburgerMenu() {
 
       {/* Sidebar menu: renderizzato direttamente nel body tramite portal */}
       <aside
+        ref={pannelloRef}
         data-menu-container
+        role="dialog"
+        aria-modal="true"
+        aria-label="Menu"
         className="da-destra fixed bottom-0 right-0 top-0 z-[9999] flex w-full flex-col bg-foglio text-inchiostro sm:w-[320px] sm:border-l sm:border-riga"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex h-14 flex-shrink-0 items-center justify-between border-b border-riga px-5">
           <h2 className="font-bold">Menu</h2>
-          <button onClick={() => setIsOpen(false)} className="-mr-2 p-2" aria-label="Chiudi menu">
+          <button onClick={() => setIsOpen(false)} className="-mr-2.5 p-2.5" aria-label="Chiudi menu">
             {icona(true)}
           </button>
         </div>
@@ -120,11 +151,12 @@ export function HamburgerMenu() {
     <>
       {/* Pulsante hamburger */}
       <button
+        ref={apriRef}
         onClick={(e) => {
           e.stopPropagation()
           setIsOpen(!isOpen)
         }}
-        className="-mr-2 p-2"
+        className="-mr-2.5 p-2.5"
         aria-label="Menu"
         type="button"
         aria-expanded={isOpen}

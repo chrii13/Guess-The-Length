@@ -12,9 +12,9 @@ import { formatLength } from '@/lib/game'
 import { sanitizeString } from '@/lib/sanitize'
 
 const numeri = [
-  { valore: 3, testo: 'lunghezze da indovinare in ogni partita' },
-  { valore: 2, testo: 'tentativi per ognuna, conta il migliore' },
-  { valore: 15, testo: 'centimetri al massimo, 8 su telefono' },
+  { valore: 3, testo: 'lunghezze per partita' },
+  { valore: 2, testo: 'tentativi per ognuna' },
+  { valore: 0, testo: 'righelli ammessi' },
 ]
 
 const misureNastro = ['7,40', '3,45', '12,60', '0,38', '9,80', '5,15', '2,30', '14,05', '6,62', '1,27']
@@ -41,18 +41,19 @@ export default function Home() {
 
       <main className="overflow-x-clip">
         {/* Apertura */}
-        <Rivela className="mx-auto max-w-4xl px-5 pb-20 pt-12 md:pt-20">
-          <h1 className="cifre text-[clamp(3.6rem,15vw,8.5rem)]">
-            <Parole testo="Guess the Length" passo={110} />
+        <Rivela subito className="mx-auto max-w-4xl px-5 pb-20 pt-12 md:pt-20">
+          <h1 className="cifre text-[clamp(4.6rem,23vw,10rem)]">
+            <Parole testo="Misura a occhio." passo={110} />
           </h1>
-          <div className="vista vista-su mt-8" style={v(450)}>
+          {/* La domanda è visibile da subito: si anima solo il metro */}
+          <div className="mt-8">
             <MetroDemo />
           </div>
-          <p className="vista vista-su mt-4 max-w-[42ch] text-xl leading-relaxed text-grafite" style={v(650)}>
-            Il gioco in cui misuri a occhio: allunga il metro fino alla lunghezza richiesta, senza righello.
-            Vince chi sbaglia meno.
+          <p className="vista vista-su mt-4 max-w-[42ch] text-xl leading-relaxed text-grafite" style={v(400)}>
+            Guess the Length è il gioco del metro: ti diamo una lunghezza, tu tiri fuori il metro.
+            Niente righello, vince chi sbaglia meno.
           </p>
-          <div className="vista vista-su mt-8 flex flex-col gap-3 sm:flex-row sm:items-center" style={v(800)}>
+          <div className="vista vista-su mt-8 flex flex-col gap-3 sm:flex-row sm:items-center" style={v(500)}>
             <Link href="/play" className="btn btn-nastro sm:px-12">
               {giocaTesto}
             </Link>
@@ -63,7 +64,7 @@ export default function Home() {
             )}
           </div>
           {ospite && (
-            <p className="vista vista-su mt-3 text-sm text-grafite" style={v(900)}>
+            <p className="vista vista-su mt-3 text-sm text-grafite" style={v(600)}>
               Da ospite il punteggio non viene salvato.{' '}
               <Link href="/register" className="collegamento text-inchiostro">
                 Registrati
@@ -74,17 +75,17 @@ export default function Home() {
         </Rivela>
 
         {/* Il gioco in tre numeri */}
-        <Rivela as="section" className="mx-auto grid max-w-4xl gap-4 px-5 pb-24 sm:grid-cols-3" aria-label="Il gioco in numeri">
+        <Rivela as="section" className="mx-auto grid max-w-4xl grid-cols-3 gap-2 px-5 pb-24 sm:gap-4" aria-label="Il gioco in numeri">
           {numeri.map((n, i) => (
             <div
               key={n.testo}
-              className="vista vista-scala rounded-2xl border border-riga bg-foglio p-6"
+              className="vista vista-scala rounded-2xl border border-riga bg-foglio p-3 sm:p-6"
               style={v(i * 140)}
             >
-              <p className="cifre text-7xl text-nastro">
+              <p className="cifre text-5xl text-nastro sm:text-7xl">
                 <Conta valore={n.valore} durata={800 + i * 200} />
               </p>
-              <p className="mt-3 font-semibold text-grafite">{n.testo}</p>
+              <p className="mt-2 text-sm font-semibold leading-snug text-grafite sm:mt-3 sm:text-base">{n.testo}</p>
             </div>
           ))}
         </Rivela>
@@ -157,7 +158,8 @@ export default function Home() {
         </section>
 
         {/* Banda gialla */}
-        <Rivela as="section" className="bg-nastro py-16 text-pece" aria-label="Niente righello">
+        <Rivela as="section" className="bg-nastro pb-16 text-pece" aria-label="Niente righello">
+          <div className="strisce mb-14 h-4" aria-hidden="true" />
           <div className="mx-auto max-w-4xl px-5">
             <p className="cifre text-[clamp(3rem,12vw,7rem)]">
               <Parole testo="Niente righello." passo={120} />
@@ -166,7 +168,7 @@ export default function Home() {
             </p>
           </div>
           <div className="mt-10 overflow-hidden border-y border-pece py-3" aria-hidden="true">
-            <div className="nastro-scorre flex w-max gap-10 font-display text-2xl font-black">
+            <div className="nastro-scorre flex w-max gap-10 font-display text-3xl tracking-[0.03em]">
               {[...misureNastro, ...misureNastro].map((m, i) => (
                 <span key={i} className="whitespace-nowrap">
                   {m} cm
@@ -174,6 +176,7 @@ export default function Home() {
               ))}
             </div>
           </div>
+          <div className="strisce mt-14 -mb-16 h-4" aria-hidden="true" />
         </Rivela>
 
         {/* Classifica */}

@@ -105,6 +105,14 @@ La transizione globale su `*` viene rimossa.
 - L'app è solo a tema scuro: niente selettore del tema.
 - Home con animazioni allo scorrimento (`components/home`): metro dimostrativo in loop, numeri che contano, passi che entrano dai lati, banda gialla con misure che scorrono, podio dal vivo, barra di avanzamento a forma di metro.
 - Il service worker si registra solo in produzione.
+
+## Stile "Cantiere" e logo Flessometro (2026-11-17)
+
+- Scelti dall'utente tra le proposte: logo Flessometro (cassa tonda del metro) e direzione "Cantiere".
+- Colori: asfalto `#24211D`, gesso `#F1F1EC`, giallo segnaletica `#FFC400`, scuro `#14120F`. Font: Anton per titoli e bottoni, Archivo per il testo.
+- Angoli quasi vivi, bordi da 3px, bottoni a blocco con ombra netta in diagonale, strisce gialle e nere sotto la barra e attorno alla banda gialla.
+- Nella home il metro dimostrativo esce dalla cassa del logo.
+- Correzioni dell'audit: metro usabile da tastiera, apertura della home visibile subito, campi più visibili, menu e schermata del record con Esc e focus, bersagli da 44px.
 - Testi dei titoli riscritti in forma più asciutta (frase normale, senza maiuscole a ogni parola).
 - Colori dei coriandoli: rimossi, sostituiti dall'overlay giallo.
 - Le modifiche PWA non committate restano non committate; il redesign non viene committato finché non viene chiesto.

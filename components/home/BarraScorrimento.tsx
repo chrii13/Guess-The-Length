@@ -29,7 +29,7 @@ export function BarraScorrimento() {
   }, [])
 
   return (
-    <div aria-hidden="true" className="pointer-events-none fixed inset-x-0 top-14 z-40 h-2">
+    <div aria-hidden="true" className="pointer-events-none fixed inset-x-0 top-16 z-40 h-2">
       <div ref={nastro} className="h-full border-b border-pece bg-nastro" style={{ ...TACCHE, width: 0 }} />
     </div>
   )

@@ -185,6 +185,15 @@ export function Meter({ length, onLengthChange, maxLength }: MeterProps) {
     setIsDragging(false)
   }
 
+  // Tastiera: le frecce allungano o accorciano il metro, con Maiusc a passi più lunghi
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    const passo = e.shiftKey ? 20 : 3
+    const verso = e.key === 'ArrowRight' || e.key === 'ArrowUp' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowDown' ? -1 : 0
+    if (!verso) return
+    e.preventDefault()
+    onLengthChange(Math.max(50, Math.min(availableWidth, length + verso * passo)))
+  }
+
   // Funzione per generare un numero pseudo-casuale ma consistente basato su un seed
   const seededRandom = (seed: number) => {
     const x = Math.sin(seed) * 10000
@@ -253,7 +262,7 @@ export function Meter({ length, onLengthChange, maxLength }: MeterProps) {
     >
       <div
         ref={meterRef}
-        className="relative inline-block cursor-grab select-none py-2 pr-2 active:cursor-grabbing"
+        className="relative inline-block cursor-grab select-none py-3 pr-2 active:cursor-grabbing"
         onMouseDown={handleMouseDown}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -280,10 +289,14 @@ export function Meter({ length, onLengthChange, maxLength }: MeterProps) {
             ))}
           </div>
 
-          {/* Gancio in acciaio: la maniglia da trascinare */}
-          <div
-            className="metro-gancio absolute -bottom-2 -right-px -top-2 w-4 rounded-md border border-pece bg-acciaio"
+          {/* Gancio in acciaio: la maniglia da trascinare, o da muovere con le frecce.
+              Non annuncia la lunghezza: il gioco è indovinarla a occhio */}
+          <button
+            type="button"
+            className="metro-gancio absolute -bottom-2 -right-px -top-2 w-4 cursor-grab rounded-md border border-pece bg-acciaio"
             data-trascina={isDragging}
+            aria-label="Gancio del metro. Freccia destra per allungarlo, freccia sinistra per accorciarlo, con Maiusc per passi più lunghi"
+            onKeyDown={handleKeyDown}
           />
         </div>
       </div>

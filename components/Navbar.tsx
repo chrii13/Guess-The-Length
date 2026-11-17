@@ -28,15 +28,17 @@ export function Navbar() {
   }, [user])
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-riga bg-carta">
+    <nav className="sticky top-0 z-50 bg-carta">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-3 px-4 sm:px-5">
         <div className="flex min-w-0 items-center gap-6">
-          <Link href="/" className="flex shrink-0 items-center gap-2 font-display text-base font-black sm:text-lg">
-            <svg viewBox="0 0 20 20" className="h-6 w-6 rounded-md" aria-hidden="true">
-              <rect width="20" height="20" fill="rgb(var(--nastro))" />
-              <path d="M5 0v6M8.5 0v10M12 0v5M15 0v12" stroke="rgb(var(--pece))" strokeWidth="1.3" />
+          <Link href="/" className="flex shrink-0 items-center gap-2.5 font-display text-lg tracking-[0.03em] sm:text-xl">
+            {/* Logo Flessometro: la cassa tonda del metro */}
+            <svg viewBox="0 0 40 40" className="h-8 w-8" aria-hidden="true">
+              <rect width="40" height="40" rx="3" fill="rgb(var(--nastro))" />
+              <circle cx="20" cy="20" r="12" fill="rgb(var(--pece))" />
+              <circle cx="20" cy="20" r="4.5" fill="rgb(var(--nastro))" />
             </svg>
-            Guess the Length
+            GUESS THE LENGTH
           </Link>
           {user && (
             <div className="hidden items-center gap-5 text-sm font-semibold text-grafite sm:flex">
@@ -58,16 +60,18 @@ export function Navbar() {
             </>
           ) : (
             <>
-              <Link href="/login" className="px-1 py-2 text-sm font-semibold hover:underline sm:px-2">
+              <Link href="/login" className="inline-flex min-h-[44px] items-center px-1 text-sm font-semibold hover:underline sm:px-2">
                 Accedi
               </Link>
-              <Link href="/register" className="btn btn-inchiostro px-3 py-2 text-xs sm:px-4 sm:text-sm">
+              <Link href="/register" className="btn btn-inchiostro min-h-[44px] px-3 py-2 text-xs sm:px-4 sm:text-sm">
                 Registrati
               </Link>
             </>
           )}
         </div>
       </div>
+      {/* Strisce gialle e nere sotto la barra */}
+      <div className="strisce h-2" aria-hidden="true" />
     </nav>
   )
 }

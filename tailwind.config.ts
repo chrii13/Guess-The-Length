@@ -18,7 +18,7 @@ const config: Config = {
         grafite: token('grafite'),
         riga: token('riga'),
         // Ogni colore ha le sue varianti: tinta per gli sfondi, ombra per il gradino dei bottoni
-        nastro: { DEFAULT: token('nastro'), tinta: token('nastro-tinta'), ombra: token('nastro-ombra') },
+        nastro: { DEFAULT: token('nastro'), tinta: token('nastro-tinta') },
         errore: { DEFAULT: token('errore'), tinta: token('errore-tinta'), ombra: token('errore-ombra') },
         sbiadito: token('sbiadito'),
         acciaio: token('acciaio'),
@@ -28,9 +28,19 @@ const config: Config = {
         sans: ['var(--font-corpo)', 'system-ui', 'sans-serif'],
         display: ['var(--font-display)', 'ui-rounded', 'system-ui', 'sans-serif'],
       },
-      // Bordi spessi come adesivi: ogni `border` è da 2px
+      // Bordi spessi da cantiere: ogni `border` è da 3px
       borderWidth: {
+        DEFAULT: '3px',
+      },
+      // Angoli quasi vivi: blocchi e cartelli, non adesivi
+      borderRadius: {
+        sm: '1px',
         DEFAULT: '2px',
+        md: '2px',
+        lg: '2px',
+        xl: '3px',
+        '2xl': '3px',
+        '3xl': '4px',
       },
     },
   },

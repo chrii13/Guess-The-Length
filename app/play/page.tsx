@@ -366,10 +366,15 @@ export default function PlayPage() {
       <main key={currentRound} className={`${pagina} entra`}>
         <div className="flex items-start justify-between gap-4">
           <div>
+            {/* Avanzamento a blocchi, come nella segnaletica di cantiere */}
+            <div className="mb-3 flex gap-1.5" aria-hidden="true">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className={`h-2.5 w-11 ${i <= currentRound ? 'bg-nastro' : 'bg-riga'}`} />
+              ))}
+            </div>
             <h1 className="text-lg font-bold">Round {currentRound + 1} di 3</h1>
             <p className="text-sm text-grafite">Tentativo {currentAttempt + 1} di 2</p>
           </div>
-          <CmReferenceBox />
         </div>
 
         <p className="mt-8 text-grafite">Allunga il metro fino a</p>
@@ -386,9 +391,13 @@ export default function PlayPage() {
             maxLength={maxLength}
           />
         </div>
-        <p className="mt-1 text-sm text-grafite">
-          Trascina il gancio per allungare il metro. Usare un righello non è la scelta migliore.
-        </p>
+        {/* Il riferimento da 1 cm sta subito sotto il metro, per confrontarli a colpo d'occhio */}
+        <div className="mt-2 flex items-start justify-between gap-6">
+          <p className="text-sm text-grafite">
+            Trascina il gancio, o usa le frecce, per allungare il metro. Usare un righello non è la scelta migliore.
+          </p>
+          <CmReferenceBox />
+        </div>
 
         {attempts.length > 0 && (
           <div className="dissolvi mt-6 rounded-xl bg-nastro-tinta px-4 py-3 text-sm font-semibold">

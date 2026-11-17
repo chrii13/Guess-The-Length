@@ -16,18 +16,22 @@ export function Rivela({
   className = '',
   style,
   children,
+  subito = false,
   ...attributi
 }: {
   as?: ElementType
+  // In cima alla pagina: anima da subito, senza aspettare che il codice sia caricato
+  subito?: boolean
   className?: string
   style?: CSSProperties
   children: ReactNode
 } & AriaAttributes) {
   const Tag = as
   const ref = useRef<HTMLElement>(null)
-  const [visibile, setVisibile] = useState(false)
+  const [visibile, setVisibile] = useState(subito)
 
   useEffect(() => {
+    if (subito) return
     const el = ref.current
     if (!el || typeof IntersectionObserver === 'undefined') {
       setVisibile(true)
@@ -44,7 +48,7 @@ export function Rivela({
     )
     osservatore.observe(el)
     return () => osservatore.disconnect()
-  }, [])
+  }, [subito])
 
   return (
     <InVista.Provider value={visibile}>

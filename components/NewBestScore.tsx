@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import { formatLength } from '@/lib/game'
 import { Cifra } from './Cifra'
 
@@ -10,6 +11,15 @@ interface NewBestScoreProps {
 }
 
 export function NewBestScore({ score, previousBest, onContinue }: NewBestScoreProps) {
+  // Esc chiude la schermata come il bottone Continua
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onContinue()
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [onContinue])
+
   return (
     <div
       className="da-sinistra fixed inset-0 z-[60] flex flex-col justify-center bg-nastro px-5 text-pece"
@@ -30,7 +40,7 @@ export function NewBestScore({ score, previousBest, onContinue }: NewBestScorePr
               <span className="font-bold">{formatLength(previousBest - score)} cm</span>.
             </p>
           )}
-          <button onClick={onContinue} className="btn mt-10 bg-pece text-nastro">
+          <button onClick={onContinue} className="btn mt-10 bg-pece text-nastro" autoFocus>
             Continua
           </button>
         </div>

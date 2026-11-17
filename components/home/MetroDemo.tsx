@@ -6,6 +6,9 @@ import { cmToPixels, formatLength } from '@/lib/game'
 
 const LUNGHEZZE = [7.4, 3.45, 9.8, 5.15, 12.6, 2.3]
 
+// Diametro della cassa tonda del metro, come nel logo
+const CASSA = 64
+
 // Tacche irregolari del nastro, come nel gioco
 export const TACCHE = {
   backgroundImage:
@@ -24,7 +27,8 @@ export function MetroDemo() {
 
   useEffect(() => {
     calibrate()
-    const misura = () => setMassimo((contenitore.current?.clientWidth ?? 0) - 18)
+    // Spazio per il nastro: tolti la cassa del metro e il gancio
+    const misura = () => setMassimo((contenitore.current?.clientWidth ?? 0) - CASSA - 18)
     misura()
     window.addEventListener('resize', misura)
     return () => window.removeEventListener('resize', misura)
@@ -55,22 +59,36 @@ export function MetroDemo() {
     }
   }, [])
 
-  const cm = LUNGHEZZE[indice]
-  const larghezza = aperto && massimo > 0 ? Math.min(cmToPixels(cm), massimo) : 26
+  // Solo misure che il metro può mostrare per intero: su telefono restano quelle corte
+  const disponibili = massimo > 0 ? LUNGHEZZE.filter((l) => cmToPixels(l) <= massimo) : LUNGHEZZE
+  const elenco = disponibili.length > 0 ? disponibili : [Math.min(...LUNGHEZZE)]
+  const cm = elenco[indice % elenco.length]
+  const larghezza = aperto && massimo > 0 ? cmToPixels(cm) : 26
 
   return (
     <div>
-      <p className="font-display text-[clamp(1.6rem,6vw,2.6rem)] font-black leading-tight" aria-live="off">
+      <p className="font-display text-[clamp(1.8rem,7vw,3rem)] uppercase leading-tight tracking-[0.02em]" aria-live="off">
         Quanto sono lunghi{' '}
-        <span key={indice} className="numero-cambia inline-block rounded-xl bg-nastro-tinta px-2 text-nastro">
-          {formatLength(cm)} cm
+        <span className="whitespace-nowrap">
+          <span key={indice} className="numero-cambia inline-block text-nastro">
+            {formatLength(cm)} cm
+          </span>
+          ?
         </span>
-        ?
       </p>
 
-      <div ref={contenitore} className="mt-6 h-16" aria-hidden="true">
+      {/* Il metro esce dalla cassa tonda del logo Flessometro */}
+      <div ref={contenitore} className="mt-6 flex h-20 items-end" aria-hidden="true">
         <div
-          className="relative h-12 border-y border-r border-pece bg-nastro"
+          className="relative z-10 flex shrink-0 items-center justify-center rounded-full border-[5px] border-pece bg-nastro"
+          style={{ width: CASSA, height: CASSA }}
+        >
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-pece">
+            <div className="h-3 w-3 rounded-full bg-nastro" />
+          </div>
+        </div>
+        <div
+          className="relative -ml-1 mb-0 h-8 border-y border-r border-pece bg-nastro"
           style={{
             ...TACCHE,
             width: `${larghezza}px`,

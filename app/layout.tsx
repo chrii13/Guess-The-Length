@@ -1,12 +1,12 @@
 import type { Metadata, Viewport } from 'next'
-import { Nunito, Nunito_Sans } from 'next/font/google'
+import { Anton, Archivo } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from '@/components/AuthProvider'
 import { Footer } from '@/components/Footer'
 import { PWARegister } from '@/components/PWARegister'
 
-const display = Nunito({ subsets: ['latin'], variable: '--font-display' })
-const corpo = Nunito_Sans({ subsets: ['latin'], variable: '--font-corpo' })
+const display = Anton({ subsets: ['latin'], weight: '400', variable: '--font-display' })
+const corpo = Archivo({ subsets: ['latin'], variable: '--font-corpo' })
 
 export const metadata: Metadata = {
   title: 'Guess the Length - Indovina la Lunghezza',
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#151719',
+  themeColor: '#24211D',
   colorScheme: 'dark',
   width: 'device-width',
   initialScale: 1,

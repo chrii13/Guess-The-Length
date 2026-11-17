@@ -3,27 +3,26 @@
 @tailwind utilities;
 
 :root {
-  /* L'app è solo a tema scuro */
+  /* Stile "Cantiere": asfalto, gesso e giallo segnaletica. Solo tema scuro */
   color-scheme: dark;
-  --carta: 21 23 25;
-  --foglio: 31 34 37;
-  --inchiostro: 238 240 236;
-  --grafite: 165 171 176;
-  --riga: 53 57 61;
-  --nastro: 255 210 31;
-  --errore: 255 92 80;
-  --acciaio: 141 148 155;
-  /* Scuro fisso: testo e tacche sul giallo del nastro */
-  --pece: 21 23 25;
-  /* Gradino pieno sotto i bottoni: un tono più scuro del loro colore */
-  --nastro-ombra: 196 152 0;
-  --inchiostro-ombra: 160 165 158;
+  --carta: 36 33 29;
+  --foglio: 46 42 37;
+  --inchiostro: 241 241 236;
+  --grafite: 201 197 188;
+  --riga: 74 69 62;
+  --nastro: 255 196 0;
+  --errore: 255 107 87;
+  --acciaio: 142 138 130;
+  /* Scuro fisso: testo, bordi e ombre sul giallo */
+  --pece: 20 18 15;
   /* Tinte per sfondi di avvisi, scelte attive e risultati */
-  --nastro-tinta: 58 49 14;
-  --errore-tinta: 64 27 25;
+  --nastro-tinta: 69 56 14;
+  --errore-tinta: 72 32 26;
   --errore-ombra: 176 44 36;
-  /* Grigio per ciò che conta meno: posizioni basse, etichette spente */
-  --sbiadito: 108 115 121;
+  /* Grigio per ciò che conta meno: posizioni basse, bordi dei campi */
+  --sbiadito: 138 132 122;
+  /* Strisce gialle e nere della segnaletica di cantiere */
+  --strisce: repeating-linear-gradient(-45deg, rgb(var(--nastro)) 0 12px, rgb(var(--pece)) 12px 24px);
 }
 
 @layer base {
@@ -48,20 +47,27 @@
 }
 
 @layer components {
-  /* Numeri e titoli: tondi e pesanti, come le cifre stampate su un metro */
+  /* Numeri e titoli: stretti e maiuscoli, come i cartelli di cantiere */
   .cifre {
-    font-family: var(--font-display), ui-rounded, system-ui, sans-serif;
-    font-weight: 900;
-    line-height: 0.98;
-    letter-spacing: -0.02em;
+    font-family: var(--font-display), 'Arial Narrow', system-ui, sans-serif;
+    font-weight: 400;
+    line-height: 0.92;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
     font-variant-numeric: tabular-nums;
   }
 
-  /* Bottoni come tasti: un gradino pieno sotto, che sparisce quando li premi */
+  /* Banda a strisce gialle e nere */
+  .strisce {
+    background: var(--strisce);
+  }
+
+  /* Bottoni come blocchi: un'ombra netta in diagonale, che sparisce quando li premi */
   .btn {
-    @apply inline-flex items-center justify-center rounded-xl px-6 py-3.5 text-[15px] font-extrabold uppercase;
-    letter-spacing: 0.053em;
-    box-shadow: 0 var(--gradino, 0px) 0 var(--colore-gradino, transparent);
+    @apply inline-flex items-center justify-center px-6 py-3 text-[19px] uppercase;
+    font-family: var(--font-display), 'Arial Narrow', system-ui, sans-serif;
+    letter-spacing: 0.05em;
+    box-shadow: var(--gradino, 0px) var(--gradino, 0px) 0 var(--colore-gradino, transparent);
     transition: transform 70ms ease-out, box-shadow 70ms ease-out, filter 120ms ease-out;
   }
 
@@ -70,7 +76,7 @@
   }
 
   .btn:active {
-    transform: translateY(var(--gradino, 0px));
+    transform: translate(var(--gradino, 0px), var(--gradino, 0px));
     box-shadow: none;
   }
 
@@ -79,30 +85,28 @@
     @apply cursor-not-allowed opacity-50;
     filter: none;
     transform: none;
-    box-shadow: 0 var(--gradino, 0px) 0 var(--colore-gradino, transparent);
+    box-shadow: var(--gradino, 0px) var(--gradino, 0px) 0 var(--colore-gradino, transparent);
   }
 
   .btn-nastro {
-    @apply bg-nastro text-pece;
-    --gradino: 4px;
-    --colore-gradino: rgb(var(--nastro-ombra));
+    @apply border border-pece bg-nastro text-pece;
+    --gradino: 5px;
+    --colore-gradino: rgb(var(--pece));
   }
 
   .btn-inchiostro {
-    @apply bg-inchiostro text-carta;
-    --gradino: 4px;
-    --colore-gradino: rgb(var(--inchiostro-ombra));
+    @apply border border-pece bg-inchiostro text-pece;
+    --gradino: 5px;
+    --colore-gradino: rgb(var(--pece));
   }
 
   .btn-linea {
-    @apply border border-riga bg-foglio text-inchiostro;
-    --gradino: 2px;
-    --colore-gradino: rgb(var(--riga));
+    @apply border border-inchiostro bg-transparent text-inchiostro;
   }
 
   .btn-linea:hover {
     filter: none;
-    @apply bg-carta;
+    @apply bg-foglio;
   }
 
   .collegamento {
@@ -118,7 +122,7 @@
   }
 
   .campo {
-    @apply w-full rounded-xl border border-riga bg-foglio px-4 py-3 text-inchiostro;
+    @apply w-full rounded-xl border border-sbiadito bg-foglio px-4 py-3 text-inchiostro;
     transition: border-color 120ms ease-out;
   }
 
