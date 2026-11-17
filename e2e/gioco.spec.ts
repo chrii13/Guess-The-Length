@@ -79,3 +79,11 @@ test('il footer non mostra indirizzi email', async ({ page }) => {
   await expect(footer.getByRole('link', { name: 'Segnala su GitHub' })).toBeVisible()
   await expect(footer).not.toContainText('@')
 })
+
+test('la pagina privacy si apre dal footer', async ({ page }) => {
+  await page.goto('/')
+  await page.locator('footer').getByRole('link', { name: 'Privacy' }).click()
+  await expect(page).toHaveURL(/\/privacy$/)
+  await expect(page.getByRole('heading', { level: 1, name: 'Privacy' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Con un account' })).toBeVisible()
+})

@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 export function Footer() {
@@ -20,7 +21,12 @@ export function Footer() {
             Segnala su GitHub
           </a>
         </p>
-        <p>© {new Date().getFullYear()} Guess the Length. Tutti i diritti riservati</p>
+        <p>
+          © {new Date().getFullYear()} Guess the Length. Tutti i diritti riservati
+          <Link href="/privacy" className="btn btn-linea btn-piccolo ml-3">
+            Privacy
+          </Link>
+        </p>
       </div>
     </footer>
   )
