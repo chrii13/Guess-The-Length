@@ -13,7 +13,8 @@ const customJestConfig = {
     '**/__tests__/**/*.test.[jt]s?(x)',
     '**/?(*.)+(spec|test).[jt]s?(x)',
   ],
-  testPathIgnorePatterns: ['/node_modules/', '/.next/'],
+  // I test end-to-end in e2e/ girano con Playwright, non con Jest
+  testPathIgnorePatterns: ['/node_modules/', '/.next/', '/e2e/'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
     // Mock isomorphic-dompurify per evitare problemi ESM

@@ -32,11 +32,14 @@ export function Navbar() {
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-3 px-4 sm:px-5">
         <div className="flex min-w-0 items-center gap-6">
           <Link href="/" className="flex shrink-0 items-center gap-2.5 font-display text-lg tracking-[0.03em] sm:text-xl">
-            {/* Logo Flessometro: la cassa tonda del metro */}
-            <svg viewBox="0 0 40 40" className="h-8 w-8" aria-hidden="true">
-              <rect width="40" height="40" rx="3" fill="rgb(var(--nastro))" />
-              <circle cx="20" cy="20" r="12" fill="rgb(var(--pece))" />
-              <circle cx="20" cy="20" r="4.5" fill="rgb(var(--nastro))" />
+            {/* Logo Flessometro: la cassa tonda del metro con il nastro tirato fuori */}
+            <svg viewBox="0 0 66 34" className="h-8 w-[62px]" aria-hidden="true">
+              <rect x="15" y="21" width="43" height="10" fill="rgb(var(--nastro))" stroke="rgb(var(--pece))" strokeWidth="2" />
+              <path d="M24 21v4M30 21v6M36 21v4M42 21v6M48 21v4" stroke="rgb(var(--pece))" strokeWidth="1.5" />
+              <rect x="56" y="17" width="6" height="16" rx="1" fill="rgb(var(--acciaio))" stroke="rgb(var(--pece))" strokeWidth="2" />
+              <circle cx="16" cy="16" r="14" fill="rgb(var(--nastro))" stroke="rgb(var(--pece))" strokeWidth="2.5" />
+              <circle cx="16" cy="16" r="7.5" fill="rgb(var(--pece))" />
+              <circle cx="16" cy="16" r="2.8" fill="rgb(var(--nastro))" />
             </svg>
             GUESS THE LENGTH
           </Link>
