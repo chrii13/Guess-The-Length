@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Navbar } from '@/components/Navbar'
 import { Meter } from '@/components/Meter'
-import { CmReferenceBox } from '@/components/CmReferenceBox'
+import { Campione } from '@/components/Campione'
 import { useAuth } from '@/components/AuthProvider'
 import { generateRandomLength, calculateError, pixelsToCm, formatLength, cmToPixels } from '@/lib/game'
 import { calibrate } from '@/lib/calibration'
@@ -194,11 +194,11 @@ export default function PlayPage() {
             Inizia partita
           </button>
           {ospite && (
-            <p className="mt-4 max-w-[44ch] text-sm text-grafite">
-              Stai giocando come ospite: il punteggio non viene salvato.{' '}
-              <Link href="/login" className="collegamento text-inchiostro">Accedi</Link> o{' '}
-              <Link href="/register" className="collegamento text-inchiostro">registrati</Link> per salvarlo.
-            </p>
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <p className="w-full text-sm text-grafite">Stai giocando come ospite: il punteggio non viene salvato.</p>
+              <Link href="/login" className="btn btn-linea btn-piccolo">Accedi</Link>
+              <Link href="/register" className="btn btn-linea btn-piccolo">Registrati</Link>
+            </div>
           )}
         </main>
       </>
@@ -248,11 +248,13 @@ export default function PlayPage() {
           )}
 
           {ospite && (
-            <p className="mt-6 max-w-[48ch] rounded-2xl border border-nastro bg-nastro-tinta px-5 py-4">
-              Hai giocato come ospite, quindi questo punteggio non è stato salvato.{' '}
-              <Link href="/register" className="collegamento">Registrati</Link> o{' '}
-              <Link href="/login" className="collegamento">accedi</Link> per salvare i prossimi ed entrare in classifica.
-            </p>
+            <div className="mt-6 max-w-[48ch] rounded-2xl border border-nastro bg-nastro-tinta px-5 py-4">
+              <p>Hai giocato come ospite, quindi questo punteggio non è stato salvato. Registrati o accedi per salvare i prossimi ed entrare in classifica.</p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                <Link href="/register" className="btn btn-nastro btn-piccolo">Registrati</Link>
+                <Link href="/login" className="btn btn-linea btn-piccolo">Accedi</Link>
+              </div>
+            </div>
           )}
 
           <ul className="mt-10 border-t border-riga">
@@ -294,7 +296,7 @@ export default function PlayPage() {
             <button onClick={() => router.push('/leaderboard')} className="btn btn-linea">
               Classifica
             </button>
-            <Link href="/" className="collegamento self-center sm:ml-3">
+            <Link href="/" className="btn btn-linea">
               Home
             </Link>
           </div>
@@ -363,41 +365,39 @@ export default function PlayPage() {
   return (
     <>
       <Navbar />
-      <main key={currentRound} className={`${pagina} entra`}>
-        <div className="flex items-start justify-between gap-4">
+      <main key={currentRound} className="entra mx-auto max-w-3xl px-5 pb-40 pt-8 md:pt-14">
+        <div className="flex items-center justify-between gap-4">
           <div>
-            {/* Avanzamento a blocchi, come nella segnaletica di cantiere */}
-            <div className="mb-3 flex gap-1.5" aria-hidden="true">
-              {[0, 1, 2].map((i) => (
-                <div key={i} className={`h-2.5 w-11 ${i <= currentRound ? 'bg-nastro' : 'bg-riga'}`} />
-              ))}
-            </div>
             <h1 className="text-lg font-bold">Round {currentRound + 1} di 3</h1>
             <p className="text-sm text-grafite">Tentativo {currentAttempt + 1} di 2</p>
           </div>
+          {/* Avanzamento a blocchi, come nella segnaletica di cantiere */}
+          <div className="flex gap-1.5" aria-hidden="true">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className={`h-3 w-10 ${i <= currentRound ? 'bg-nastro' : 'bg-riga'}`} />
+            ))}
+          </div>
         </div>
 
-        <p className="mt-8 text-grafite">Allunga il metro fino a</p>
+        <p className="mt-10 text-grafite">Allunga il metro fino a</p>
         <p className="cifre mt-2 text-[clamp(5rem,24vw,12rem)]">
           <Cifra valore={currentTarget} durata={500} />
           <span className="text-[0.32em]"> cm</span>
         </p>
 
-        {/* Non mostriamo la lunghezza attuale - l'utente deve indovinare ad occhio */}
-        <div className="-mx-5 mt-8 md:mx-0">
+        {/* Il metro e, subito sotto, il campione da 1 cm: stesso inizio, stessa scala.
+            Non mostriamo la lunghezza attuale: l'utente deve indovinare a occhio */}
+        <div className="-mx-5 mt-10 md:mx-0">
           <Meter
             length={meterLength}
             onLengthChange={setMeterLength}
             maxLength={maxLength}
           />
+          <div className="mt-1">
+            <Campione />
+          </div>
         </div>
-        {/* Il riferimento da 1 cm sta subito sotto il metro, per confrontarli a colpo d'occhio */}
-        <div className="mt-2 flex items-start justify-between gap-6">
-          <p className="text-sm text-grafite">
-            Trascina il gancio, o usa le frecce, per allungare il metro. Usare un righello non è la scelta migliore.
-          </p>
-          <CmReferenceBox />
-        </div>
+        <p className="mt-4 text-sm text-grafite">Trascina il gancio o usa le frecce, senza righello.</p>
 
         {attempts.length > 0 && (
           <div className="dissolvi mt-6 rounded-xl bg-nastro-tinta px-4 py-3 text-sm font-semibold">
@@ -411,15 +411,23 @@ export default function PlayPage() {
             })}
           </div>
         )}
-
-        <button
-          onClick={handleConfirm}
-          disabled={roundComplete}
-          className="btn btn-nastro mt-8 w-full sm:w-auto sm:px-14"
-        >
-          Conferma
-        </button>
       </main>
+
+      {/* Conferma sempre a portata di pollice, fissato in basso */}
+      <div
+        className="fixed inset-x-0 bottom-0 z-30 border-t border-riga bg-carta px-5 pt-3"
+        style={{ paddingBottom: 'max(16px, env(safe-area-inset-bottom))' }}
+      >
+        <div className="mx-auto max-w-3xl">
+          <button
+            onClick={handleConfirm}
+            disabled={roundComplete}
+            className="btn btn-nastro w-full sm:w-auto sm:px-14"
+          >
+            Conferma
+          </button>
+        </div>
+      </div>
     </>
   )
 }

@@ -121,12 +121,12 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="mt-6 text-grafite">
-          Non hai un account?{' '}
-          <Link href="/register" className="collegamento text-inchiostro">
+        <div className="mt-6 flex flex-wrap items-center gap-3 text-grafite">
+          <p>Non hai un account?</p>
+          <Link href="/register" className="btn btn-linea btn-piccolo">
             Registrati
           </Link>
-        </p>
+        </div>
       </main>
     </>
   )

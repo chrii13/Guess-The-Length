@@ -491,12 +491,12 @@ export default function RegisterPage() {
           </button>
         </form>
 
-        <p className="mt-6 text-grafite">
-          Hai già un account?{' '}
-          <Link href="/login" className="collegamento text-inchiostro">
+        <div className="mt-6 flex flex-wrap items-center gap-3 text-grafite">
+          <p>Hai già un account?</p>
+          <Link href="/login" className="btn btn-linea btn-piccolo">
             Accedi
           </Link>
-        </p>
+        </div>
       </main>
     </>
   )

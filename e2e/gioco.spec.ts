@@ -43,7 +43,7 @@ test('un ospite gioca tre round e vede il punteggio non salvato', async ({ page 
   }
 
   await expect(page.getByRole('heading', { name: 'Partita terminata' })).toBeVisible()
-  await expect(page.getByText('questo punteggio non è stato salvato')).toBeVisible()
+  await expect(page.getByText(/questo punteggio non è stato salvato/)).toBeVisible()
   await expect(page.getByRole('button', { name: 'Rigioca' })).toBeVisible()
   // Senza account non c'è un resoconto da vedere
   await expect(page.getByRole('button', { name: 'Vedi resoconto' })).toHaveCount(0)
@@ -75,6 +75,6 @@ test('la classifica si apre anche senza account', async ({ page }) => {
 test('il footer non mostra indirizzi email', async ({ page }) => {
   await page.goto('/')
   const footer = page.locator('footer')
-  await expect(footer.getByRole('link', { name: 'Segnalali su GitHub' })).toBeVisible()
+  await expect(footer.getByRole('link', { name: 'Segnala su GitHub' })).toBeVisible()
   await expect(footer).not.toContainText('@')
 })

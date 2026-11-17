@@ -65,11 +65,7 @@ export default function Home() {
           </div>
           {ospite && (
             <p className="vista vista-su mt-3 text-sm text-grafite" style={v(600)}>
-              Da ospite il punteggio non viene salvato.{' '}
-              <Link href="/register" className="collegamento text-inchiostro">
-                Registrati
-              </Link>{' '}
-              per salvarlo ed entrare in classifica.
+              Da ospite il punteggio non viene salvato: registrati per salvarlo ed entrare in classifica.
             </p>
           )}
         </Rivela>
@@ -221,9 +217,11 @@ export default function Home() {
                 ))}
               </ol>
             )}
-            <Link href="/leaderboard" className="vista vista-su collegamento mt-6 inline-block" style={v(600)}>
-              Guarda la classifica completa
-            </Link>
+            <div className="vista vista-su mt-6" style={v(600)}>
+              <Link href="/leaderboard" className="btn btn-linea btn-piccolo">
+                Guarda la classifica completa
+              </Link>
+            </div>
           </Rivela>
         </section>
 

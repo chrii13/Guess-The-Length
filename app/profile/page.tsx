@@ -166,9 +166,9 @@ export default function ProfilePage() {
                 </div>
               </div>
             ) : (
-              <div className="flex items-baseline justify-between gap-4 border-b border-riga pb-3">
+              <div className="flex items-center justify-between gap-4 border-b border-riga pb-3">
                 <p className="min-w-0 truncate font-semibold">{sanitizeString(username || 'Utente')}</p>
-                <button onClick={() => setEditingUsername(true)} className="collegamento shrink-0">
+                <button onClick={() => setEditingUsername(true)} className="btn btn-linea btn-piccolo shrink-0">
                   Modifica
                 </button>
               </div>

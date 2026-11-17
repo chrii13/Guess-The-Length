@@ -171,7 +171,7 @@ export default function ResultPage() {
           <button onClick={() => router.push('/leaderboard')} className="btn btn-linea">
             Vedi classifica
           </button>
-          <Link href="/" className="collegamento self-center sm:ml-3">
+          <Link href="/" className="btn btn-linea">
             Home
           </Link>
         </div>

@@ -109,12 +109,9 @@
     @apply bg-foglio;
   }
 
-  .collegamento {
-    @apply font-semibold underline decoration-nastro decoration-2 underline-offset-4;
-  }
-
-  .collegamento:hover {
-    @apply decoration-inchiostro;
+  /* Bottone compatto, per azioni secondarie accanto a una frase */
+  .btn-piccolo {
+    @apply min-h-[44px] px-4 py-1.5 text-base;
   }
 
   .etichetta {
