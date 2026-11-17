@@ -77,14 +77,9 @@ export default function Home() {
             )}
           </div>
           {ospite && (
-            <div className="vista vista-su mt-4 flex flex-wrap items-center gap-x-3 gap-y-2" style={v(600)}>
-              <p className="text-sm text-grafite">
-                Da ospite il punteggio non viene salvato. Per salvarlo ed entrare in classifica:
-              </p>
-              <Link href="/register" className="btn btn-linea btn-piccolo">
-                Registrati
-              </Link>
-            </div>
+            <p className="vista vista-su mt-4 text-sm text-grafite" style={v(600)}>
+              Da ospite il punteggio non viene salvato: con un account entri in classifica.
+            </p>
           )}
         </Rivela>
 
@@ -191,12 +186,12 @@ export default function Home() {
         </Rivela>
 
         {/* Classifica */}
-        <section className="mx-auto max-w-4xl px-5 py-24" aria-labelledby="podio">
+        <section className="mx-auto max-w-4xl px-5 py-24 text-center" aria-labelledby="podio">
           <Rivela>
             <h2 id="podio" className="cifre text-[clamp(2.6rem,9vw,4.5rem)]">
               <Parole testo="Chi misura meglio" />
             </h2>
-            <p className="vista vista-su mt-3 max-w-[48ch] text-lg text-grafite" style={v(300)}>
+            <p className="vista vista-su mx-auto mt-3 max-w-[48ch] text-lg text-grafite" style={v(300)}>
               I tre punteggi più bassi di sempre. Chi ha un account entra in classifica con il suo record.
             </p>
           </Rivela>
@@ -207,7 +202,7 @@ export default function Home() {
             ) : podio.length === 0 ? (
               <p className="vista vista-su text-lg">Il podio è ancora vuoto: il primo posto può essere tuo.</p>
             ) : (
-              <ol className="grid gap-4">
+              <ol className="mx-auto grid max-w-2xl gap-4 text-left">
                 {podio.map((s, i) => (
                   <li
                     key={s.id}
