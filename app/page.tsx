@@ -63,8 +63,8 @@ export default function Home() {
             <MetroDemo />
           </div>
           <p className="vista vista-su mt-4 max-w-[42ch] text-xl leading-relaxed text-grafite" style={v(400)}>
-            Guess the Length è il gioco del metro: ti diamo una lunghezza, tu tiri fuori il metro.
-            Niente righello, vince chi sbaglia meno.
+            Guess the Length richiede fermezza e precisione: una lunghezza da indovinare e un metro da tirare.
+            Chi vince? Chi sbaglia meno.
           </p>
           <div className="vista vista-su mt-8 flex flex-col gap-3 sm:flex-row sm:items-center" style={v(500)}>
             <Link href="/play" className="btn btn-nastro sm:px-12">
