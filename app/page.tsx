@@ -255,7 +255,7 @@ export default function Home() {
             <Parole testo="Pronto a misurare?" passo={110} />
           </p>
           <div className="vista vista-scala mt-8" style={v(500)}>
-            <Link href="/play" className="btn btn-nastro px-14">
+            <Link href="/play" className="btn btn-nastro px-16 py-4 text-2xl">
               {giocaTesto}
             </Link>
           </div>
