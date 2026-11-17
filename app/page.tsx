@@ -6,7 +6,6 @@ import { Navbar } from '@/components/Navbar'
 import { useAuth } from '@/components/AuthProvider'
 import { Rivela, Parole, Conta } from '@/components/home/Rivela'
 import { MetroDemo, TACCHE } from '@/components/home/MetroDemo'
-import { BarraScorrimento } from '@/components/home/BarraScorrimento'
 import { getLeaderboard, type Score } from '@/lib/scores'
 import { formatLength } from '@/lib/game'
 import { sanitizeString } from '@/lib/sanitize'
@@ -37,7 +36,6 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <BarraScorrimento />
 
       <main className="overflow-x-clip">
         {/* Apertura */}
@@ -64,9 +62,14 @@ export default function Home() {
             )}
           </div>
           {ospite && (
-            <p className="vista vista-su mt-3 text-sm text-grafite" style={v(600)}>
-              Da ospite il punteggio non viene salvato: registrati per salvarlo ed entrare in classifica.
-            </p>
+            <div className="vista vista-su mt-4 flex flex-wrap items-center gap-x-3 gap-y-2" style={v(600)}>
+              <p className="text-sm text-grafite">
+                Da ospite il punteggio non viene salvato. Per salvarlo ed entrare in classifica:
+              </p>
+              <Link href="/register" className="btn btn-linea btn-piccolo">
+                Registrati
+              </Link>
+            </div>
           )}
         </Rivela>
 

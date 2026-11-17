@@ -16,6 +16,7 @@ test('la home spiega il gioco e porta alla partita da ospite', async ({ page }) 
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Misura a occhio')
   await expect(page.getByRole('heading', { name: 'Come si gioca' })).toBeVisible()
   await expect(page.getByText('Da ospite il punteggio non viene salvato')).toBeVisible()
+  await expect(page.locator('main').getByRole('link', { name: 'Registrati', exact: true })).toHaveAttribute('href', '/register')
 
   await page.getByRole('link', { name: 'Gioca come ospite' }).first().click()
   await expect(page).toHaveURL(/\/play$/)

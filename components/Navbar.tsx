@@ -33,10 +33,10 @@ export function Navbar() {
         <div className="flex min-w-0 items-center gap-6">
           <Link href="/" className="flex shrink-0 items-center gap-2.5 font-display text-lg tracking-[0.03em] sm:text-xl">
             {/* Logo Flessometro: la cassa tonda del metro con il nastro tirato fuori */}
-            <svg viewBox="0 0 66 34" className="h-8 w-[62px]" aria-hidden="true">
-              <rect x="15" y="21" width="43" height="10" fill="rgb(var(--nastro))" stroke="rgb(var(--pece))" strokeWidth="2" />
-              <path d="M24 21v4M30 21v6M36 21v4M42 21v6M48 21v4" stroke="rgb(var(--pece))" strokeWidth="1.5" />
-              <rect x="56" y="17" width="6" height="16" rx="1" fill="rgb(var(--acciaio))" stroke="rgb(var(--pece))" strokeWidth="2" />
+            <svg viewBox="0 0 48 34" className="h-8 w-[45px] shrink-0" aria-hidden="true">
+              <rect x="15" y="21" width="26" height="10" fill="rgb(var(--nastro))" stroke="rgb(var(--pece))" strokeWidth="2" />
+              <path d="M24 21v4M30 21v6M36 21v4" stroke="rgb(var(--pece))" strokeWidth="1.5" />
+              <rect x="39" y="17" width="6" height="16" rx="1" fill="rgb(var(--acciaio))" stroke="rgb(var(--pece))" strokeWidth="2" />
               <circle cx="16" cy="16" r="14" fill="rgb(var(--nastro))" stroke="rgb(var(--pece))" strokeWidth="2.5" />
               <circle cx="16" cy="16" r="7.5" fill="rgb(var(--pece))" />
               <circle cx="16" cy="16" r="2.8" fill="rgb(var(--nastro))" />
@@ -63,10 +63,14 @@ export function Navbar() {
             </>
           ) : (
             <>
-              <Link href="/login" className="inline-flex min-h-[44px] items-center px-1 text-sm font-semibold hover:underline sm:px-2">
+              {/* Su telefono un solo bottone, per non affollare la barra: la registrazione è nella pagina di accesso */}
+              <Link href="/login" className="btn btn-inchiostro min-h-[44px] px-4 py-2 text-base sm:hidden">
                 Accedi
               </Link>
-              <Link href="/register" className="btn btn-inchiostro min-h-[44px] px-3 py-2 text-xs sm:px-4 sm:text-sm">
+              <Link href="/login" className="hidden min-h-[44px] items-center px-2 text-sm font-semibold hover:text-nastro sm:inline-flex">
+                Accedi
+              </Link>
+              <Link href="/register" className="btn btn-inchiostro hidden min-h-[44px] px-4 py-2 text-sm sm:inline-flex">
                 Registrati
               </Link>
             </>
