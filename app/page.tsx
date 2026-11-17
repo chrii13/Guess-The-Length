@@ -20,6 +20,21 @@ const misureNastro = ['7,40', '3,45', '12,60', '0,38', '9,80', '5,15', '2,30', '
 
 const v = (ms: number) => ({ ['--ritardo' as string]: `${ms}ms` })
 
+// Numero del passo in un quadrato giallo, sulla stessa riga del titolo
+function Passo({ n, titolo }: { n: number; titolo: string }) {
+  return (
+    <div className="flex items-center gap-3">
+      <span className="cifre flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-nastro text-2xl text-pece" aria-hidden="true">
+        {n}
+      </span>
+      <h3 className="text-2xl font-extrabold leading-tight">
+        <span className="sr-only">{n}. </span>
+        {titolo}
+      </h3>
+    </div>
+  )
+}
+
 export default function Home() {
   const { user, loading } = useAuth()
   const ospite = !loading && !user
@@ -74,17 +89,17 @@ export default function Home() {
         </Rivela>
 
         {/* Il gioco in tre numeri */}
-        <Rivela as="section" className="mx-auto grid max-w-4xl grid-cols-3 gap-2 px-5 pb-24 sm:gap-4" aria-label="Il gioco in numeri">
+        <Rivela as="section" className="mx-auto grid max-w-4xl gap-3 px-5 pb-24 sm:grid-cols-3 sm:gap-4" aria-label="Il gioco in numeri">
           {numeri.map((n, i) => (
             <div
               key={n.testo}
-              className="vista vista-scala rounded-2xl border border-riga bg-foglio p-3 sm:p-6"
+              className="vista vista-scala flex items-center gap-5 rounded-2xl border border-riga bg-foglio px-5 py-3 sm:block sm:p-6"
               style={v(i * 140)}
             >
-              <p className="cifre text-5xl text-nastro sm:text-7xl">
+              <p className="cifre w-10 shrink-0 text-6xl text-nastro sm:w-auto sm:text-7xl">
                 <Conta valore={n.valore} durata={800 + i * 200} />
               </p>
-              <p className="mt-2 text-sm font-semibold leading-snug text-grafite sm:mt-3 sm:text-base">{n.testo}</p>
+              <p className="text-lg font-semibold leading-snug text-grafite sm:mt-3 sm:text-base">{n.testo}</p>
             </div>
           ))}
         </Rivela>
@@ -97,16 +112,15 @@ export default function Home() {
             </h2>
           </Rivela>
 
-          <div className="mt-12 grid gap-20">
-            <Rivela className="grid items-center gap-8 md:grid-cols-2">
+          <div className="mt-10 grid gap-16 md:mt-12 md:gap-20">
+            <Rivela className="grid items-center gap-5 md:grid-cols-2 md:gap-8">
               <div className="vista vista-sinistra">
-                <p className="cifre text-2xl text-nastro">1</p>
-                <h3 className="mt-2 text-2xl font-extrabold">Ti viene data una lunghezza</h3>
+                <Passo n={1} titolo="Ti viene data una lunghezza" />
                 <p className="mt-2 max-w-[40ch] text-lg text-grafite">
                   Un numero in centimetri, scelto a caso. In una partita sono tre.
                 </p>
               </div>
-              <div className="vista vista-destra rounded-3xl bg-nastro-tinta px-8 py-10" style={v(150)}>
+              <div className="vista vista-destra rounded-3xl bg-nastro-tinta px-6 py-7 md:px-8 md:py-10" style={v(150)}>
                 <p className="text-sm font-bold text-grafite">Allunga il metro fino a</p>
                 <p className="cifre mt-2 text-7xl text-nastro">
                   <Conta valore={7.4} cm durata={1100} />
@@ -115,15 +129,14 @@ export default function Home() {
               </div>
             </Rivela>
 
-            <Rivela className="grid items-center gap-8 md:grid-cols-2">
+            <Rivela className="grid items-center gap-5 md:grid-cols-2 md:gap-8">
               <div className="vista vista-destra md:order-2">
-                <p className="cifre text-2xl text-nastro">2</p>
-                <h3 className="mt-2 text-2xl font-extrabold">Allunghi il metro a occhio</h3>
+                <Passo n={2} titolo="Allunghi il metro a occhio" />
                 <p className="mt-2 max-w-[40ch] text-lg text-grafite">
                   Trascini il gancio finché ti sembra giusto. Due tentativi, e conta il migliore.
                 </p>
               </div>
-              <div className="vista vista-sinistra rounded-3xl border border-riga bg-foglio px-6 py-12 md:order-1" style={v(150)}>
+              <div className="vista vista-sinistra rounded-3xl border border-riga bg-foglio px-6 py-8 md:order-1 md:py-12" style={v(150)}>
                 <div className="relative h-12">
                   <div className="vista vista-allunga absolute inset-y-0 left-0 w-[82%] origin-left border-y border-r border-pece bg-nastro" style={{ ...TACCHE, ...v(400) }}>
                     <div className="absolute -bottom-2 -right-2 -top-2 w-4 rounded-md border border-pece bg-acciaio" />
@@ -132,10 +145,9 @@ export default function Home() {
               </div>
             </Rivela>
 
-            <Rivela className="grid items-center gap-8 md:grid-cols-2">
+            <Rivela className="grid items-center gap-5 md:grid-cols-2 md:gap-8">
               <div className="vista vista-sinistra">
-                <p className="cifre text-2xl text-nastro">3</p>
-                <h3 className="mt-2 text-2xl font-extrabold">Scopri di quanto hai sbagliato</h3>
+                <Passo n={3} titolo="Scopri di quanto hai sbagliato" />
                 <p className="mt-2 max-w-[40ch] text-lg text-grafite">
                   Il punteggio è la somma dei tre scarti. Meno centimetri, più in alto in classifica.
                 </p>

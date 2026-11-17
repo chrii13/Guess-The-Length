@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Navbar } from '@/components/Navbar'
+import { AccediConGoogle } from '@/components/AccediConGoogle'
 import { supabase } from '@/lib/supabase'
 import { checkUsernameExists } from '@/lib/profile'
 import { validateUsername, validateEmail, validatePassword, sanitizeUsername, sanitizeEmail } from '@/lib/validation'
@@ -424,6 +425,8 @@ export default function RegisterPage() {
       <main className="entra mx-auto max-w-md px-5 pb-16 pt-10 md:pt-16">
         <h1 className="cifre text-6xl">Registrati</h1>
         <p className="mt-3 text-grafite">Crea il tuo account per salvare i punteggi.</p>
+
+        <AccediConGoogle />
 
         <form onSubmit={handleRegister} className="mt-8 space-y-5">
           <div>

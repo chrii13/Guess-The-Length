@@ -80,6 +80,22 @@ test('il footer non mostra indirizzi email', async ({ page }) => {
   await expect(footer).not.toContainText('@')
 })
 
+for (const pagina of ['/login', '/register']) {
+  test(`da ${pagina} il bottone Google porta all'accesso di Google`, async ({ page }) => {
+    // Fermiamo la richiesta prima che esca verso Supabase e Google
+    let richiesta = ''
+    await page.route('**/auth/v1/authorize**', (route) => {
+      richiesta = route.request().url()
+      return route.fulfill({ status: 200, body: 'ok' })
+    })
+
+    await page.goto(pagina)
+    await page.getByRole('button', { name: 'Continua con Google' }).click()
+    await expect.poll(() => richiesta).toContain('provider=google')
+    expect(new URL(richiesta).searchParams.get('redirect_to')).toMatch(/^http:\/\/localhost:\d+\/$/)
+  })
+}
+
 test('la pagina privacy si apre dal footer', async ({ page }) => {
   await page.goto('/')
   await page.locator('footer').getByRole('link', { name: 'Privacy' }).click()

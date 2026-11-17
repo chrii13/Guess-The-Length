@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Navbar } from '@/components/Navbar'
+import { AccediConGoogle } from '@/components/AccediConGoogle'
 import { supabase } from '@/lib/supabase'
 import { validateEmail, sanitizeEmail } from '@/lib/validation'
 
@@ -78,6 +79,8 @@ export default function LoginPage() {
       <main className="entra mx-auto max-w-md px-5 pb-16 pt-10 md:pt-16">
         <h1 className="cifre text-6xl">Accedi</h1>
         <p className="mt-3 text-grafite">Entra nel tuo account Guess the Length.</p>
+
+        <AccediConGoogle />
 
         <form onSubmit={handleLogin} className="mt-8 space-y-5">
           <div>
