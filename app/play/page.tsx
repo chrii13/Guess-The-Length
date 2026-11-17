@@ -9,7 +9,9 @@ import { Campione } from '@/components/Campione'
 import { useAuth } from '@/components/AuthProvider'
 import { generateRandomLength, calculateError, pixelsToCm, formatLength, cmToPixels } from '@/lib/game'
 import { calibrate } from '@/lib/calibration'
-import { saveGameSession, getUserBestScore, type RoundData } from '@/lib/scores'
+import { saveGameSession, getUserBestScore, getLeaderboard, type RoundData } from '@/lib/scores'
+import { TACCHE } from '@/components/home/MetroDemo'
+import { sanitizeString } from '@/lib/sanitize'
 import { NewBestScore } from '@/components/NewBestScore'
 import { Confronto } from '@/components/Confronto'
 import { Cifra } from '@/components/Cifra'
@@ -38,7 +40,25 @@ export default function PlayPage() {
   const [showNewBestScore, setShowNewBestScore] = useState(false)
   const [gameSaved, setGameSaved] = useState(false)
 
+  // Record mostrato prima della partita: il proprio per chi ha un account, il primo in classifica per gli ospiti.
+  // undefined = in caricamento o non disponibile, null = nessun record ancora
+  const [record, setRecord] = useState<{ valore: number; nome?: string } | null | undefined>(undefined)
+
   const maxLength = cmToPixels(15) // Massimo 15 cm
+
+  useEffect(() => {
+    if (loading) return
+    let attivo = true
+    const carica = user
+      ? getUserBestScore(user.id).then((v) => (v === null ? null : { valore: v }))
+      : getLeaderboard(1).then(([primo]) => (primo ? { valore: primo.best_score, nome: primo.username || 'Utente' } : undefined))
+    carica
+      .then((r) => attivo && setRecord(r))
+      .catch(() => attivo && setRecord(undefined))
+    return () => {
+      attivo = false
+    }
+  }, [user, loading])
 
   // Inizializza la calibrazione con valore di default
   useEffect(() => {
@@ -182,24 +202,65 @@ export default function PlayPage() {
     return (
       <>
         <Navbar />
-        <main className={`${pagina} entra`}>
-          <h1 className="cifre text-[clamp(3.2rem,13vw,7rem)]">
-            Tre lunghezze, due tentativi.
-          </h1>
-          <p className="mt-8 max-w-[44ch] text-lg leading-relaxed">
-            Allunga il metro fino alla lunghezza richiesta, a occhio.{' '}
-            <span className="font-semibold">Andarci vicino conta solo a bocce... o quasi.</span>
-          </p>
-          <button onClick={startGame} className="btn btn-nastro mt-8 w-full sm:w-auto sm:px-14">
-            Inizia partita
-          </button>
-          {ospite && (
-            <div className="mt-6 flex flex-wrap items-center gap-3">
-              <p className="w-full text-sm text-grafite">Stai giocando come ospite: il punteggio non viene salvato.</p>
-              <Link href="/login" className="btn btn-linea btn-piccolo">Accedi</Link>
-              <Link href="/register" className="btn btn-linea btn-piccolo">Registrati</Link>
-            </div>
-          )}
+        {/* Tutto in una schermata: su pc testo e bottone a sinistra, round e record a destra */}
+        <main className="entra mx-auto grid max-w-5xl gap-x-12 px-5 pb-4 pt-5 md:grid-cols-2 md:items-center md:pt-14">
+          <div className="md:col-start-1 md:row-start-1">
+            <h1 className="cifre text-[clamp(2.8rem,12vw,4.6rem)]">
+              Tre lunghezze, due tentativi.
+            </h1>
+            <p className="mt-3 max-w-[44ch] leading-relaxed md:mt-6 md:text-lg">
+              Allunga il metro fino alla lunghezza richiesta, a occhio.{' '}
+              <span className="font-semibold">Andarci vicino conta solo a bocce... o quasi.</span>
+            </p>
+          </div>
+
+          <div className="mt-5 md:col-start-2 md:row-span-2 md:row-start-1 md:mt-0">
+            {/* La partita in tre round */}
+            <ol className="grid grid-cols-3 gap-2 sm:gap-3" aria-label="La partita">
+              {['w-[55%]', 'w-[85%]', 'w-[35%]'].map((larghezza, i) => (
+                <li key={i} className="rounded-2xl border border-riga bg-foglio p-3 sm:p-4">
+                  <p className="text-sm font-bold sm:text-base">Round {i + 1}</p>
+                  <div className={`mt-2 h-4 border-y border-r border-pece bg-nastro ${larghezza}`} style={TACCHE} aria-hidden="true" />
+                  <p className="mt-2 text-xs text-grafite sm:text-sm">2 tentativi</p>
+                </li>
+              ))}
+            </ol>
+
+            {/* Un obiettivo da battere */}
+            {record !== undefined && (
+              <div className="mt-2 rounded-2xl bg-nastro-tinta px-4 py-3 sm:mt-3 sm:px-5 sm:py-4">
+                {record === null ? (
+                  <p className="font-semibold">Prima partita: il punteggio che fai oggi diventa il tuo record.</p>
+                ) : (
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="min-w-0">
+                      <p className="font-bold">{record.nome ? 'Record da battere' : 'Il tuo record'}</p>
+                      <p className="truncate text-sm text-grafite">
+                        {record.nome ? <>di <span className="font-semibold text-inchiostro">{sanitizeString(record.nome)}</span>, primo in classifica</> : 'Battilo.'}
+                      </p>
+                    </div>
+                    <p className="cifre shrink-0 text-5xl text-nastro">
+                      {formatLength(record.valore)}
+                      <span className="text-xl"> cm</span>
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className="md:col-start-1 md:row-start-2">
+            <button onClick={startGame} className="btn btn-nastro mt-5 w-full sm:w-auto sm:px-14 md:mt-8">
+              Inizia partita
+            </button>
+            {ospite && (
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <p className="w-full text-sm text-grafite">Stai giocando come ospite: il punteggio non viene salvato.</p>
+                <Link href="/login" className="btn btn-linea btn-piccolo">Accedi</Link>
+                <Link href="/register" className="btn btn-linea btn-piccolo">Registrati</Link>
+              </div>
+            )}
+          </div>
         </main>
       </>
     )
