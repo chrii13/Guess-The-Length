@@ -47,12 +47,6 @@ export default function PlayPage() {
     }
   }, [])
 
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/login')
-    }
-  }, [user, loading, router])
-
   const startGame = () => {
     // Su mobile, limitare le lunghezze target a 8cm per evitare che il metro esca dallo schermo
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
@@ -181,9 +175,8 @@ export default function PlayPage() {
     )
   }
 
-  if (!user) {
-    return null
-  }
+  // Senza accesso si gioca come ospite: la partita funziona uguale ma non viene salvata
+  const ospite = !user
 
   if (!gameStarted) {
     return (
@@ -200,6 +193,13 @@ export default function PlayPage() {
           <button onClick={startGame} className="btn btn-nastro mt-8 w-full sm:w-auto sm:px-14">
             Inizia partita
           </button>
+          {ospite && (
+            <p className="mt-4 max-w-[44ch] text-sm text-grafite">
+              Stai giocando come ospite: il punteggio non viene salvato.{' '}
+              <Link href="/login" className="collegamento text-inchiostro">Accedi</Link> o{' '}
+              <Link href="/register" className="collegamento text-inchiostro">registrati</Link> per salvarlo.
+            </p>
+          )}
         </main>
       </>
     )
@@ -247,6 +247,14 @@ export default function PlayPage() {
             <p className="mt-4 text-sm text-grafite">Salvataggio in corso...</p>
           )}
 
+          {ospite && (
+            <p className="mt-6 max-w-[44ch] border-l-2 border-nastro pl-3">
+              Hai giocato come ospite, quindi questo punteggio non è stato salvato.{' '}
+              <Link href="/register" className="collegamento">Registrati</Link> o{' '}
+              <Link href="/login" className="collegamento">accedi</Link> per salvare i prossimi ed entrare in classifica.
+            </p>
+          )}
+
           <ul className="mt-10 border-t border-riga">
             {rounds.map((round, idx) => (
               <li
@@ -278,9 +286,11 @@ export default function PlayPage() {
             >
               Rigioca
             </button>
-            <button onClick={() => router.push('/result')} className="btn btn-linea">
-              Vedi resoconto
-            </button>
+            {!ospite && (
+              <button onClick={() => router.push('/result')} className="btn btn-linea">
+                Vedi resoconto
+              </button>
+            )}
             <button onClick={() => router.push('/leaderboard')} className="btn btn-linea">
               Classifica
             </button>
