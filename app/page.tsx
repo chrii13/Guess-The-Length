@@ -18,6 +18,9 @@ const numeri = [
 
 const misureNastro = ['7,40', '3,45', '12,60', '0,38', '9,80', '5,15', '2,30', '14,05', '6,62', '1,27']
 
+const fraseApertura =
+  'Guess the Length richiede fermezza e precisione: una lunghezza da indovinare e un metro da tirare. Chi vince? Chi sbaglia meno.'
+
 const v = (ms: number) => ({ ['--ritardo' as string]: `${ms}ms` })
 
 // Numero del passo in un quadrato giallo, sulla stessa riga del titolo
@@ -62,24 +65,35 @@ export default function Home() {
           <div className="mt-8">
             <MetroDemo />
           </div>
-          <p className="vista vista-su mt-4 max-w-[42ch] text-xl leading-relaxed text-grafite" style={v(400)}>
-            Guess the Length richiede fermezza e precisione: una lunghezza da indovinare e un metro da tirare.
-            Chi vince? Chi sbaglia meno.
-          </p>
-          <div className="vista vista-su mt-8 flex flex-col gap-3 sm:flex-row sm:items-center" style={v(500)}>
-            <Link href="/play" className="btn btn-nastro sm:px-12">
-              {giocaTesto}
-            </Link>
-            {ospite && (
-              <Link href="/login" className="btn btn-linea">
-                Accedi
-              </Link>
-            )}
-          </div>
-          {ospite && (
-            <p className="vista vista-su mt-4 text-sm text-grafite" style={v(600)}>
-              Da ospite il punteggio non viene salvato: con un account entri in classifica.
-            </p>
+          {ospite ? (
+            <>
+              <p className="vista vista-su mt-4 max-w-[42ch] text-xl leading-relaxed text-grafite" style={v(400)}>
+                {fraseApertura}
+              </p>
+              <div className="vista vista-su mt-8 flex flex-col gap-3 sm:flex-row sm:items-center" style={v(500)}>
+                <Link href="/play" className="btn btn-nastro sm:px-12">
+                  {giocaTesto}
+                </Link>
+                <Link href="/login" className="btn btn-linea">
+                  Accedi
+                </Link>
+              </div>
+              <p className="vista vista-su mt-4 text-sm text-grafite" style={v(600)}>
+                Da ospite il punteggio non viene salvato: con un account entri in classifica.
+              </p>
+            </>
+          ) : (
+            // Con l'accesso resta un solo bottone: grande, accanto alla frase su pc e sotto su telefono
+            <div className="mt-4 sm:flex sm:items-center sm:justify-between sm:gap-10">
+              <p className="vista vista-su max-w-[42ch] text-xl leading-relaxed text-grafite" style={v(400)}>
+                {fraseApertura}
+              </p>
+              <div className="vista vista-su mt-8 sm:mt-0 sm:shrink-0" style={v(500)}>
+                <Link href="/play" className="btn btn-nastro w-full py-5 text-3xl sm:w-auto sm:px-20">
+                  {giocaTesto}
+                </Link>
+              </div>
+            </div>
           )}
         </Rivela>
 
