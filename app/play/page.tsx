@@ -10,7 +10,6 @@ import { useAuth } from '@/components/AuthProvider'
 import { generateRandomLength, calculateError, pixelsToCm, formatLength, cmToPixels } from '@/lib/game'
 import { calibrate } from '@/lib/calibration'
 import { saveGameSession, getUserBestScore, getLeaderboard, type RoundData } from '@/lib/scores'
-import { TACCHE } from '@/components/home/MetroDemo'
 import { sanitizeString } from '@/lib/sanitize'
 import { NewBestScore } from '@/components/NewBestScore'
 import { Confronto } from '@/components/Confronto'
@@ -202,7 +201,7 @@ export default function PlayPage() {
     return (
       <>
         <Navbar />
-        {/* Tutto in una schermata: su pc testo e bottone a sinistra, round e record a destra */}
+        {/* Tutto in una schermata: su pc testo e bottone a sinistra, record a destra */}
         <main className="entra mx-auto grid max-w-5xl gap-x-12 px-5 pb-4 pt-5 md:grid-cols-2 md:items-center md:pt-14">
           <div className="md:col-start-1 md:row-start-1">
             <h1 className="cifre text-[clamp(2.8rem,12vw,4.6rem)]">
@@ -215,20 +214,9 @@ export default function PlayPage() {
           </div>
 
           <div className="mt-5 md:col-start-2 md:row-span-2 md:row-start-1 md:mt-0">
-            {/* La partita in tre round */}
-            <ol className="grid grid-cols-3 gap-2 sm:gap-3" aria-label="La partita">
-              {['w-[55%]', 'w-[85%]', 'w-[35%]'].map((larghezza, i) => (
-                <li key={i} className="rounded-2xl border border-riga bg-foglio p-3 sm:p-4">
-                  <p className="text-sm font-bold sm:text-base">Round {i + 1}</p>
-                  <div className={`mt-2 h-4 border-y border-r border-pece bg-nastro ${larghezza}`} style={TACCHE} aria-hidden="true" />
-                  <p className="mt-2 text-xs text-grafite sm:text-sm">2 tentativi</p>
-                </li>
-              ))}
-            </ol>
-
             {/* Un obiettivo da battere */}
             {record !== undefined && (
-              <div className="mt-2 rounded-2xl bg-nastro-tinta px-4 py-3 sm:mt-3 sm:px-5 sm:py-4">
+              <div className="rounded-2xl bg-nastro-tinta px-4 py-3 sm:px-5 sm:py-4">
                 {record === null ? (
                   <p className="font-semibold">Prima partita: il punteggio che fai oggi diventa il tuo record.</p>
                 ) : (
