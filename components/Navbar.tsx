@@ -55,12 +55,7 @@ export function Navbar() {
           {loading ? (
             <div className="caricamento" role="status" aria-label="Caricamento" />
           ) : user ? (
-            <>
-              <span className="hidden max-w-[16ch] truncate text-sm text-grafite lg:block">
-                Ciao, <span className="font-semibold text-inchiostro">{sanitizeString(username || user.email?.split('@')[0] || 'Utente')}</span>
-              </span>
-              <HamburgerMenu />
-            </>
+            <HamburgerMenu nome={sanitizeString(username || user.email?.split('@')[0] || 'Utente')} />
           ) : (
             <>
               {/* Su telefono un solo bottone, per non affollare la barra: la registrazione è nella pagina di accesso */}

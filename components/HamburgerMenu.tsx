@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from './AuthProvider'
 import { supabase } from '@/lib/supabase'
 
-export function HamburgerMenu() {
+export function HamburgerMenu({ nome }: { nome: string }) {
   const [isOpen, setIsOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const { user } = useAuth()
@@ -91,10 +91,24 @@ export function HamburgerMenu() {
     </svg>
   )
 
+  // Il bottone che apre il menu: iniziale in un cerchio giallo, nome (da telefono solo l'iniziale) e freccina
+  const contenutoBottone = (
+    <>
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-nastro font-display text-lg text-pece" aria-hidden="true">
+        {nome.charAt(0).toUpperCase()}
+      </span>
+      <span className="hidden max-w-[18ch] truncate text-sm font-semibold sm:block">{nome}</span>
+      <svg className={`h-4 w-4 shrink-0 transition-transform duration-150 ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path strokeLinecap="square" strokeWidth={2.5} d="M6 9l6 6 6-6" />
+      </svg>
+    </>
+  )
+  const classeBottone = 'flex min-h-[44px] min-w-0 items-center gap-2 rounded-full py-1 pl-1 pr-2.5 hover:bg-foglio'
+
   if (!mounted) {
     return (
-      <button className="-mr-2.5 p-2.5" aria-label="Menu" type="button" disabled>
-        {icona(false)}
+      <button className={classeBottone} aria-label={`Menu di ${nome}`} type="button" disabled>
+        {contenutoBottone}
       </button>
     )
   }
@@ -149,19 +163,18 @@ export function HamburgerMenu() {
 
   return (
     <>
-      {/* Pulsante hamburger */}
       <button
         ref={apriRef}
         onClick={(e) => {
           e.stopPropagation()
           setIsOpen(!isOpen)
         }}
-        className="-mr-2.5 p-2.5"
-        aria-label="Menu"
+        className={classeBottone}
+        aria-label={`Menu di ${nome}`}
         type="button"
         aria-expanded={isOpen}
       >
-        {icona(isOpen)}
+        {contenutoBottone}
       </button>
 
       {/* Renderizza il menu direttamente nel body usando Portal */}
