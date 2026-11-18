@@ -4,6 +4,7 @@ import './globals.css'
 import { AuthProvider } from '@/components/AuthProvider'
 import { Footer } from '@/components/Footer'
 import { PWARegister } from '@/components/PWARegister'
+import { Analytics } from '@vercel/analytics/next'
 
 const display = Anton({ subsets: ['latin'], weight: '400', variable: '--font-display' })
 const corpo = Archivo({ subsets: ['latin'], variable: '--font-corpo' })
@@ -47,6 +48,7 @@ export default function RootLayout({
           </div>
           <Footer />
         </AuthProvider>
+        <Analytics />
       </body>
     </html>
   )
